@@ -20,7 +20,7 @@ def choose_option():
         elif option == 2:
             return 'https://api.github.com/search/repositories?q=stars:5&per_page=100'
         else:
-            print "Wrong option, choose between given options"
+            # print "Wrong option, choose between given options"
 
 def json_parse(data):
     return json.loads(data)['items']
@@ -55,12 +55,12 @@ def next_page(next):
     while True:
         try:
             response, content = request(url + '&page=' + str(next[0]))
-            print response['link']
+            # print response['link']
             json_parsed = json_parse(content)
             next = find_link(response)
         except IndexError as e:
-            print 'Response link ' + str(e)
-            print 'Finished'
+            # print 'Response link ' + str(e)
+            # print 'Finished'
             break
         except KeyError as e:
             break
@@ -78,13 +78,16 @@ def next_page(next):
 #str(1).zfill(2)
 
 def countingByDate():
-    url = 'https://api.github.com/search/repositories?q=created:' + str(year) + '-' + str(month).zfill(2) + '-' + str(
-        day).zfill(2) + '&per_page=100'
-    print url
-    response, content = request(url)
-    json_parsed = json_count(content)
-    date = str(year) + '-' + str(month).zfill(2) + '-' + str(day).zfill(2)
-    write_count_csv('createdcount.csv', json_parsed, date)
+    try:
+        url = 'https://api.github.com/search/repositories?q=created:' + str(year) + '-' + str(month).zfill(2) + '-' + str(
+            day).zfill(2) + '+stars:>1&per_page=100'
+        print url
+        response, content = request(url)
+        json_parsed = json_count(content)
+        date = str(year) + '-' + str(month).zfill(2) + '-' + str(day).zfill(2)
+        write_count_csv('createdcount.csv', json_parsed, date)
+    except ValueError:
+        pass
 
 thirtyone = [1,3,5,7,8,10,12]
 thirty = [4,6,9,11]
