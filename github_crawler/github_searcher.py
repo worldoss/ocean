@@ -21,6 +21,7 @@ def choose_option():
             return 'https://api.github.com/search/repositories?q=stars:5&per_page=100'
         else:
             # print "Wrong option, choose between given options"
+            pass
 
 def json_parse(data):
     return json.loads(data)['items']
@@ -53,31 +54,17 @@ def find_link(response):
 
 def next_page(next):
     while True:
-        try:
-            response, content = request(url + '&page=' + str(next[0]))
-            # print response['link']
+        url =
+        response, content = request(url + '&page=' + str(next[0]))
+        if json.loads(content)['incomplete_results'] == False:
             json_parsed = json_parse(content)
             next = find_link(response)
-        except IndexError as e:
-            # print 'Response link ' + str(e)
-            # print 'Finished'
-            break
-        except KeyError as e:
-            break
-        finally:
-            write_csv('./forkcount.csv', json_parsed, 'full_name', 'forks_count')
+            write_csv('starcount_createdafter2015_updatedafter201607.csv', json_parsed, 'full_name', 'stargazers_count')
+        else:
+            print 'incomplete results'
 
 
-# url = 'https://api.github.com/search/repositories?q=forks:>1&sort=forks&per_page=100'
-# response, content = request(url)
-# json_parsed = json_parse(content)
-# write_csv('forkcount.csv',json_parsed,'full_name','forks_count')
-# next = find_link(response)
-# next_page(next)
-
-#str(1).zfill(2)
-
-def countingByDate():
+def countingByDate(day,month,year):
     try:
         url = 'https://api.github.com/search/repositories?q=created:' + str(year) + '-' + str(month).zfill(2) + '-' + str(
             day).zfill(2) + '+stars:>1&per_page=100'
@@ -85,26 +72,48 @@ def countingByDate():
         response, content = request(url)
         json_parsed = json_count(content)
         date = str(year) + '-' + str(month).zfill(2) + '-' + str(day).zfill(2)
-        write_count_csv('createdcount.csv', json_parsed, date)
+        write_count_csv('createdcount_stars:>1_updatedat2016'
+                        '.csv', json_parsed, date)
     except ValueError:
         pass
 
-thirtyone = [1,3,5,7,8,10,12]
-thirty = [4,6,9,11]
-twentyeight = [2]
-year=2015
-for year_loop in range(3):
-    for month in range(12):
-        if month in thirtyone:
-            for day in range(1,32):
-                countingByDate()
-        if month in thirty:
-            for day in range(1,31):
-                countingByDate()
-        if month in twentyeight:
-            for day in range(1,29):
-                countingByDate()
-        sleep(2)
-    year+=1
-
 # 끝나고 2016년 2월 29일 추가해줘야함
+
+def countByDate():
+    thirtyone = [1,3,5,7,8,10,12]
+    thirty = [4,6,9,11]
+    twentyeight = [2]
+    for year in range(2015,2018):
+        for month in range(1,13):
+            if month in thirtyone:
+                for day in range(1,32):
+                    countingByDate(day,month,year)
+            if month in thirty:
+                for day in range(1,31):
+                    countingByDate(day,month,year)
+            if month in twentyeight:
+                for day in range(1,29):
+                    countingByDate(day,month,year)
+            sleep(2)
+        year+=1
+
+url = 'https://api.github.com/search/repositories?q=stars:>1&per_page=100&sort=stars'
+print url
+response, content = request(url)
+if json.loads(content)['incomplete_results'] == False:
+    json_parsed = json_parse(content)
+    write_csv('starcount_createdafter2015_updatedafter201607.csv',json_parsed,'full_name','stargazers_count')
+    next = find_link(response)
+    next_page(next)
+else:
+    print 'incomplete result'
+
+# url = 'https://api.github.com/search/repositories?q=created:>2015-01-01+stars:>1&per_page=100&sort=stars'
+# print url
+# response, content = request(url)
+# json_parsed = json_parse(content)
+# write_csv('forkcount.csv',json_parsed,'full_name','forks_count')
+# next = find_link(response)
+# next_page(next)
+
+
