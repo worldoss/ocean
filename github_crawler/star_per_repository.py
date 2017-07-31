@@ -33,26 +33,29 @@ lang_thousand={
     'CSharp':227,
     'CPP':421,
     'Clojure':64,
+    # 'CSharp':227,
+    # 'CPP':421,
+    # 'Clojure':64,
     'CoffeeScript':63,
     'CSS':262,
     'Go':475,
     'Haskell':35,
     'HTML':322,
-    'Java':1270,
+    # 'Java':1270,
     'Javascript':2908,
-    'Lua':36,
-    'Matlab':9,
-    'Objective-C':716,
-    'Perl':32,
-    'PHP':458,
-    'Python':1012,
-    'R':30,
-    'Ruby':600,
-    'Scala':75,
-    'Shell':215,
-    'Swift':359,
-     'TeX':15,
-     'Vim-script':59
+    # 'Lua':36,
+    # 'Matlab':9,
+    # 'Objective-C':716,
+    # 'Perl':32,
+    # 'PHP':458,
+    # 'Python':1012,
+    # 'R':30,
+    # 'Ruby':600,
+    # 'Scala':75,
+    # 'Shell':215,
+    # 'Swift':359,
+    #  'TeX':15,
+    #  'Vim-script':59
 }
 
 lang_items=lang_thousand.items()
@@ -67,9 +70,9 @@ for lang in lang_items:
             if json.loads(content)['incomplete_results'] == False:
                 if int(json_parsed) != 0:
                     print count, json_parsed
-                    with open('data/star_per_repository_language.csv','a') as csvfile:
+                    with open('data/(donghyun)star_per_repository_language.csv','a') as csvfile:
                         writer= csv.writer(csvfile)
-                        writer.writerow([str(count)]+[json_parsed])
+                        writer.writerow([lang[0]]+[str(count)]+[json_parsed])
                         count-=1
                 else:
                     raise NoresultError('No results')
