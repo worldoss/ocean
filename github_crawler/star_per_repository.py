@@ -5,7 +5,7 @@ import base64
 import csv
 from time import sleep
 
-class NoincompleteError(Exception):
+class NotincompleteError(Exception):
     def __init__(self, msg):
         self.msg = msg
 
@@ -29,7 +29,7 @@ def request(url):
 # 언어별 1000번째 저장소 star수
 lang_thousand={
     'ActionScript':10,
-    'C 34455':428,
+    'C':428,
     'CSharp':227,
     'CPP':421,
     'Clojure':64,
@@ -74,8 +74,8 @@ for lang in lang_items:
                 else:
                     raise NoresultError('No results')
             else:
-                raise NoincompleteError('Incomplete results, try again')
-        except NoincompleteError as e:
+                raise NotincompleteError('Incomplete results, try again')
+        except NotincompleteError as e:
             print e
         except NoresultError as e:
             count-=1
