@@ -30,6 +30,9 @@ def request(url):
 lang_thousand={
     'ActionScript':10,
     'C':428,
+    'CSharp':227,
+    'CPP':421,
+    'Clojure':64,
     # 'CSharp':227,
     # 'CPP':421,
     # 'Clojure':64,
