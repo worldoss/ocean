@@ -21,34 +21,33 @@ class NoresultError(Exception):
     def __str__(self):
         return self.msg
 
-# 언어별 1000번째 저장소 star수
-lang_thousand={
-    'ActionScript':10,
-    'C':428,
-    'CSharp':227,
-    'CPP':421,
-    'Clojure':64,
-    'CoffeeScript':63,
-    'CSS':262,
-    'Go':475,
-    'Haskell':35,
-    'HTML':322,
-    'Java':1270,
-    'Javascript':2908,
-    'Lua':36,
-    'Matlab':9,
-    'Objective-C':716,
-    'Perl':32,
-    'PHP':458,
-    'Python':1012,
-    'R':30,
-    'Ruby':600,
-    'Scala':75,
-    'Shell':215,
-    'Swift':359,
-    'TeX':15,
-    'Vim-script':59
-}
+language=[
+    'ActionScript',
+    'C',
+    'CSharp',
+    'CPP',
+    'Clojure',
+    'CoffeeScript',
+    'CSS',
+    'Go',
+    'Haskell',
+    'HTML',
+    'Java',
+    'Javascript',
+    'Lua',
+    'Matlab',
+    'Objective-C',
+    'Perl',
+    'PHP',
+    'Python',
+    'R',
+    'Ruby',
+    'Scala',
+    'Shell',
+    'Swift',
+    'TeX',
+    'Vim-script'
+]
 
 field_list=[
     'id','name','full_name',
@@ -83,7 +82,7 @@ def Request(url):
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
 def WriteCSV(json_parsed,field_name):
-    with open('data/Top_repositories(final).csv','a') as csvfile:
+    with open('data/1000_star_per_repository_language.csv','a') as csvfile:
         fieldnames = []
         fieldnames_dict = {}
         for field in field_name:
@@ -96,7 +95,7 @@ def WriteCSV(json_parsed,field_name):
                 writer.writerow(fieldnames_dict)
                 fieldnames_dict = {}
             except UnicodeEncodeError as e1:
-                with open('data/error_Top_repositories(final).csv','a') as csvfile:
+                with open('data/(test)error_language_1000.csv','a') as csvfile:
                     fieldnames_dict['description']=fieldnames_dict['description'].encode('utf-8')
                     try:
                         writer.writerow(fieldnames_dict)
@@ -123,7 +122,7 @@ def NextPage(url,next,last):
             response, content = Request(next_url)
             if json.loads(content)['incomplete_results'] == False:
                 json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed,field_list)
+                WriteCSV(json_parsed,['language','stargazers_count'])
                 next = FindLink(response,'next')
                 count_last += 1
             else:
@@ -132,21 +131,18 @@ def NextPage(url,next,last):
             print e
         except KeyError as e:
             print e
-            print 'what happened'
             sleep(2)
 
-lang_key = lang_thousand.keys()
-# First top 1000 stars respositories per language
-for lang in lang_key:
+# Star Count First top 1000 stars respositories per language
+for lang in language:
     while True:
         url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang+'"&per_page=100&sort=stars'
         print url
         try:
             response, content = Request(url)
             if json.loads(content)['incomplete_results']==False:
-                print 'Respository count: '+str(json.loads(content)['total_count'])
                 json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed,field_list)
+                WriteCSV(json_parsed,['language','stargazers_count'])
                 try:
                     next = FindLink(response,'next')
                     NextPage(url,next,[10])
@@ -159,29 +155,4 @@ for lang in lang_key:
             print e
             sleep(2)
 
-# From 1001 top repository ~ 135252 top repository
-lang_value = lang_thousand.items()
-for lang in lang_value:
-    # 1001번째 star 수 부터 카운트
-    count=lang[1]-1
-    while count>49:
-        url = 'https://api.github.com/search/repositories?q=stars:'+str(count)+'+language:"'+lang[0]+'"&per_page=100&sort=stars'
-        print url
-        try:
-            response, content = Request(url)
-            if json.loads(content)['incomplete_results'] == False:
-                print 'Repository count: '+str(json.loads(content)['total_count'])
-                json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed,field_list)
-                try:
-                    next = FindLink(response,'next')
-                    last = FindLink(response,'last')
-                    NextPage(url,next,last)
-                except KeyError as e:
-                    print e
-            else:
-                print 'incomplete result'
-            count -= 1
-        except KeyError as e:
-            print e
-            sleep(2)
+

@@ -5,7 +5,7 @@ import base64
 import csv
 from time import sleep
 
-class NotincompleteError(Exception):
+class incompleteError(Exception):
     def __init__(self, msg):
         self.msg = msg
 
@@ -77,8 +77,8 @@ for lang in lang_items:
                 else:
                     raise NoresultError('No results')
             else:
-                raise NotincompleteError('Incomplete results, try again')
-        except NotincompleteError as e:
+                raise incompleteError('Incomplete results, try again')
+        except incompleteError as e:
             print e
         except NoresultError as e:
             count-=1
