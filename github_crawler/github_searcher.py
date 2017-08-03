@@ -207,7 +207,6 @@ def NextPage(url,next,last):
 lang_thousand = {}
 lang_thousand.update(lang_popular)
 lang_thousand.update(lang_others)
-print lang_thousand
 
 # First top 1000 stars respositories per language
 lang_key = lang_thousand.keys()
@@ -226,7 +225,8 @@ for lang in lang_key:
                     NextPage(url,next,[10])
                     break
                 except KeyError as e:
-                    print e
+                    print 'no next page'
+                    break
             else:
                 raise incompleteError('Not incomplete results, try again')
         except KeyError as e:
@@ -234,30 +234,29 @@ for lang in lang_key:
             sleep(2)
 
 # From 1001 top repository ~ 135252 top repository
-# lang_value = lang_thousand.items()
-# print lang_value
-# for lang in lang_value:
-#     print lang
-#     # 1001번째 star 수 부터 카운트
-#     count=lang[1]-1
-#     while count>49:
-#         url = 'https://api.github.com/search/repositories?q=stars:'+str(count)+'+language:"'+lang[0]+'"&per_page=100&sort=stars'
-#         print url
-#         try:
-#             response, content = Request(url)
-#             if json.loads(content)['incomplete_results'] == False:
-#                 print 'Repository count: '+str(json.loads(content)['total_count'])
-#                 json_parsed = json.loads(content)['items']
-#                 WriteCSV(json_parsed,field_list)
-#                 try:
-#                     next = FindLink(response,'next')
-#                     last = FindLink(response,'last')
-#                     NextPage(url,next,last)
-#                 except KeyError as e:
-#                     print e
-#             else:
-#                 print 'incomplete result'
-#             count -= 1
-#         except KeyError as e:
-#             print e
-#             sleep(2)
+lang_value = lang_thousand.items()
+for lang in lang_value:
+    print lang
+    # 1001번째 star 수 부터 카운트
+    count=lang[1]-1
+    while count>49:
+        url = 'https://api.github.com/search/repositories?q=stars:'+str(count)+'+language:"'+lang[0]+'"&per_page=100&sort=stars'
+        print url
+        try:
+            response, content = Request(url)
+            if json.loads(content)['incomplete_results'] == False:
+                print 'Repository count: '+str(json.loads(content)['total_count'])
+                json_parsed = json.loads(content)['items']
+                WriteCSV(json_parsed,field_list)
+                try:
+                    next = FindLink(response,'next')
+                    last = FindLink(response,'last')
+                    NextPage(url,next,last)
+                except KeyError as e:
+                    print e
+            else:
+                print 'incomplete result'
+            count -= 1
+        except KeyError as e:
+            print e
+            sleep(2)
