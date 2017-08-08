@@ -118,7 +118,7 @@ lang_thousand = {}
 lang_thousand.update(lang_popular)
 lang_thousand.update(lang_others)
 lang_items=lang_thousand.items()
-
+# count by stars after 1000th repositories
 for lang in lang_items:
     count=lang[1]-1
     while count>5:
@@ -145,3 +145,26 @@ for lang in lang_items:
             print e
         except KeyError:
             sleep(1)
+# Count how many in top star repositories
+for lang in lang_items:
+    url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang[0]+'"&per_page=100'
+    print url
+    try:
+        response, content = request(url)
+        json_parsed =  json.loads(content)['total_count']
+        if json.loads(content)['incomplete_results'] == False:
+            if int(json_parsed) != 0:
+                print json_parsed
+                with open('data/(test)1000_star_per_repository_language.csv','a') as csvfile:
+                    writer= csv.writer(csvfile)
+                    writer.writerow([lang[0]]+[json_parsed])
+            else:
+                raise NoresultError('No results')
+        else:
+            raise incompleteError('Incomplete results, try again')
+    except incompleteError as e:
+        print e
+    except NoresultError as e:
+        print e
+    except KeyError:
+        sleep(1)
