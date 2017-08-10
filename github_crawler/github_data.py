@@ -160,11 +160,13 @@ def WriteCSV(json_parsed,field_name):
         fieldnames_dict = {}
         for field in field_name:
             fieldnames.append(field)
-        writer = csv.DictWriter(csvfile,fieldnames=fieldnames)
+        fieldnames.append('saved_DateTime')
         for data in json_parsed:
             for field in field_name:
                 fieldnames_dict[field]=data[field]
+            # Save Time log
             fieldnames_dict['saved_DateTime'] = str(datetime.datetime.now())
+            writer = csv.DictWriter(csvfile,fieldnames=fieldnames)
             try:
                 writer.writerow(fieldnames_dict)
                 fieldnames_dict = {}
