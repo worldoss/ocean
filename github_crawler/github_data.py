@@ -5,6 +5,7 @@ import json
 import base64
 import csv
 import re
+import datetime
 from time import sleep
 
 class incompleteError(Exception):
@@ -23,36 +24,36 @@ class NoresultError(Exception):
 
 # popular language 1000번째 star수
 lang_popular={
-    # 'ActionScript':10,
-    # 'C':428,
-    # 'CSharp':227,
-    # 'CPP':421,
-    # 'Clojure':64,
-    # 'CoffeeScript':63,
-    # 'CSS':262,
-    # 'Go':475,
-    # 'Haskell':35,
-    # 'HTML':322,
-    # 'Java':1270,
-    # 'Javascript':2908,
-    # 'Lua':36,
-    # 'Matlab':9,
-    # 'Objective-C':716,
-    # 'Perl':32,
-    # 'PHP':458,
-    # 'Python':1012,
-    # 'R':30,
-    # 'Ruby':600,
-    # 'Scala':75,
-    # 'Shell':215,
-    # 'Swift':359,
-    # 'TeX':15,
-    # 'Vim-script':59
+    'ActionScript':10,
+    'C':428,
+    'CSharp':227,
+    'CPP':421,
+    'Clojure':64,
+    'CoffeeScript':63,
+    'CSS':262,
+    'Go':475,
+    'Haskell':35,
+    'HTML':322,
+    'Java':1270,
+    'Javascript':2908,
+    'Lua':36,
+    'Matlab':9,
+    'Objective-C':716,
+    'Perl':32,
+    'PHP':458,
+    'Python':1012,
+    'R':30,
+    'Ruby':600,
+    'Scala':75,
+    'Shell':215,
+    'Swift':359,
+    'TeX':15,
+    'Vim-script':59
 }
 
 # other language 1000번째 star수
 lang_others={
-    'Mercury': 6, 'Mako': 6, 'TypeScript': 63, 'PureBasic': 6,
+    'Mercury': 6, 'Mako': 6, 'PureBasic': 6,
     'DTrace': 6, 'Self': 9, 'Lean': 6,
     'Handlebars': 6, 'RenderScript': 6, 'Graphviz-(DOT)': 7,
     'Fortran': 6, 'Ceylon': 6, 'Rebol': 6, 'RobotFramework': 6,
@@ -72,7 +73,7 @@ lang_others={
     'OpenSCAD': 6, 'ApacheConf': 6, 'Makefile': 10, 'BitBake': 6,
     'Golo': 8, 'M4': 6, 'LLVM': 6, 'GDScript': 6, 'Verilog': 6,
     'Stata': 6, 'Factor': 6, 'Haxe': 6, 'Forth': 6, 'Red': 6,
-    'HLSL': 6, 'Pure-Data': 6, 'Hy': 6, 'XProc': 6, 'XPages': 7,
+    'hlsl': 6, 'Pure-Data': 6, 'Hy': 6, 'XProc': 6, 'XPages': 7,
     'Volt': 6, 'LSL': 6, 'Emacs-Lisp': 32, 'Pascal': 6, 'eC': 7,
     'Terra': 7, 'GCC-Machine-Description': 6, 'Awk': 6, 'UrWeb': 6,
     'Lex': 6, 'Brainfuck': 8, 'Idris': 6, 'REXX': 6, 'LilyPond': 6,
@@ -102,7 +103,7 @@ lang_others={
     'Yacc': 6, 'Fantom': 6, 'Zephir': 6, 'Smalltalk': 6, 'DM': 6, 'Ioke': 6, 'Monkey': 6, 'Gnuplot': 6,
     'Inform-7': 6, 'Apex': 6, 'LiveScript': 6, 'Mathematica': 6, 'QMake': 6, 'Rust': 41, 'ABAP': 6, 'Julia': 6,
     'Slash': 6, 'PicoLisp': 6, 'Erlang': 23, 'Pan': 6, 'LookML': 6, 'Eagle': 6, 'Scheme': 6, 'ooc': 6,
-    'PogoScript': 6, 'Nim': 6, 'Max': 6, 'Dart': 6, 'KiCad': 6, 'Nix': 6, 'Common-Lisp': 8,
+    'PogoScript': 6, 'Nim': 6, 'Max': 6, 'Dart': 6, 'Nix': 6, 'Common-Lisp': 8,
     'Propeller-Spin': 6, 'Processing': 6, 'Roff': 6, 'XQuery': 6, 'Nit': 6, 'Chapel': 7, 'Coq': 6, 'Dylan': 7,
     'E': 6, 'Xtend': 6, 'Parrot': 6, 'Csound-Document': 8, 'M': 6, 'Papyrus': 7, 'Web-Ontology-Language': 6,
     'CLIPS': 6, 'CartoCSS': 6, 'Perl-6': 6, 'Clean': 7, 'Alloy': 6, 'Puppet': 6, 'CWeb': 98,
@@ -111,7 +112,8 @@ lang_others={
     'Shen': 8, 'SRecode-Template': 10, 'Dogescript': 7, 'nesC': 6, 'Inno-Setup': 6
 }
 
-errors="'F#': 36318, 'HTML+ERB': 6553, 'HTML+EEX': 6553, 'HTML+PHP': 6553,'HTML+ECR': 6553,'HTML+Django': 6553,'NetLinx+ERB': 6553,'GAS': 6553, 'Objective-C++': 6553 "
+# Excluded languages for unsolvable errors
+errors="'TypeScript':65,'KiCad':6,'F#': 36318, 'HTML+ERB': 6553, 'HTML+EEX': 6553, 'HTML+PHP': 6553,'HTML+ECR': 6553,'HTML+Django': 6553,'NetLinx+ERB': 6553,'GAS': 6553, 'Objective-C++': 6553 "
 
 field_list=[
     'id','name','full_name',
@@ -145,6 +147,13 @@ def Request(url):
     auth = base64.encodestring('rlrlaa123' + ':' + 'ehehdd009')
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
+# 저장할 csv 파일명 수정
+def CreateCSV():
+    with open('data/(test)star_per_repository_language.csv', 'a') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=field_list)
+        writer.writeheader()
+
+# 저장할 csv 파일명 수정 (CreateCSV csv 파일명과 일치!) + error log 저장할 csv 파일명 따로 수정
 def WriteCSV(json_parsed,field_name):
     with open('data/(test)star_per_repository_language.csv','a') as csvfile:
         fieldnames = []
@@ -155,7 +164,7 @@ def WriteCSV(json_parsed,field_name):
         for data in json_parsed:
             for field in field_name:
                 fieldnames_dict[field]=data[field]
-            print field_name
+            fieldnames_dict['saved_DateTime'] = str(datetime.datetime.now())
             try:
                 writer.writerow(fieldnames_dict)
                 fieldnames_dict = {}
@@ -177,7 +186,6 @@ def WriteCSV(json_parsed,field_name):
                                 errorwriter.writerow([fieldnames_dict['full_name'],e3])
                                 writer.writerow({})
                                 fieldnames_dict = {}
-
 
 def FindLink(response,which):
     if which == 'next':
@@ -205,9 +213,13 @@ def NextPage(url,next,last):
             print e
             sleep(2)
 
+# Connect popular language and other language
 lang_thousand = {}
 lang_thousand.update(lang_popular)
 lang_thousand.update(lang_others)
+
+# Write field headers
+CreateCSV()
 
 # First top 1000 stars respositories per language
 lang_key = lang_thousand.keys()
@@ -241,7 +253,7 @@ for lang in lang_value:
     print lang
     # 1001번째 star 수 부터 카운트
     count=lang[1]-1
-    while count>49:
+    while count>50:
         url = 'https://api.github.com/search/repositories?q=stars:'+str(count)+'+language:"'+lang[0]+'"&per_page=100&sort=stars'
         print url
         try:
@@ -255,7 +267,7 @@ for lang in lang_value:
                     last = FindLink(response,'last')
                     NextPage(url,next,last)
                 except KeyError as e:
-                    print e
+                    print 'no next page'
             else:
                 print 'incomplete result'
             count -= 1

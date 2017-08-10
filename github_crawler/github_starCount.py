@@ -55,8 +55,9 @@ lang_popular={
     'TeX':15,
     'Vim-script':59
 }
+
 lang_others={
-    'Mercury': 6, 'Mako': 6, 'TypeScript': 63, 'PureBasic': 6,
+    'Mercury': 6, 'Mako': 6, 'PureBasic': 6,
     'DTrace': 6, 'Self': 9, 'Lean': 6,
     'Handlebars': 6, 'RenderScript': 6, 'Graphviz-(DOT)': 7,
     'Fortran': 6, 'Ceylon': 6, 'Rebol': 6, 'RobotFramework': 6,
@@ -106,7 +107,7 @@ lang_others={
     'Yacc': 6, 'Fantom': 6, 'Zephir': 6, 'Smalltalk': 6, 'DM': 6, 'Ioke': 6, 'Monkey': 6, 'Gnuplot': 6,
     'Inform-7': 6, 'Apex': 6, 'LiveScript': 6, 'Mathematica': 6, 'QMake': 6, 'Rust': 41, 'ABAP': 6, 'Julia': 6,
     'Slash': 6, 'PicoLisp': 6, 'Erlang': 23, 'Pan': 6, 'LookML': 6, 'Eagle': 6, 'Scheme': 6, 'ooc': 6,
-    'PogoScript': 6, 'Nim': 6, 'Max': 6, 'Dart': 6, 'KiCad': 6, 'Nix': 6, 'Common-Lisp': 8,
+    'PogoScript': 6, 'Nim': 6, 'Max': 6, 'Dart': 6, 'Nix': 6, 'Common-Lisp': 8,
     'Propeller-Spin': 6, 'Processing': 6, 'Roff': 6, 'XQuery': 6, 'Nit': 6, 'Chapel': 7, 'Coq': 6, 'Dylan': 7,
     'E': 6, 'Xtend': 6, 'Parrot': 6, 'Csound-Document': 8, 'M': 6, 'Papyrus': 7, 'Web-Ontology-Language': 6,
     'CLIPS': 6, 'CartoCSS': 6, 'Perl-6': 6, 'Clean': 7, 'Alloy': 6, 'Puppet': 6, 'CWeb': 98,
@@ -115,13 +116,24 @@ lang_others={
     'Shen': 8, 'SRecode-Template': 10, 'Dogescript': 7, 'nesC': 6, 'Inno-Setup': 6
 }
 
-
-
 def FindLink(response,which):
     if which == 'next':
         return re.compile('([0-9]+)>; rel="next"').findall(response['link'])
     elif which == 'last':
         return re.compile('([0-9]+)>; rel="last"').findall(response['link'])
+
+# 저장할 csv 파일명 수정
+def TopStarWriteCSV(lang,json_parsed):
+    with open('data/(donghyun)countStar.csv', 'a') as csvfile:
+        writer = csv.writer(csvfile)
+        for data in json_parsed:
+            writer.writerow([lang[0]] + [data['stargazers_count']] + [1])
+# 저장할 csv 파일명 수정 (TopStarWriteCSV csv 파일명과 일치!)
+def UnderStarWriteCSV(lang,count,json_parsed):
+    with open('data/(donghyun)countStar.csv', 'a') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow([lang[0]] + [str(count)] + [json_parsed])
+        count -= 1
 
 def NextPage(url,next,last):
     count_last = 2
@@ -132,10 +144,7 @@ def NextPage(url,next,last):
             response, content = Request(next_url)
             if json.loads(content)['incomplete_results'] == False:
                 json_parsed = json.loads(content)['items']
-                with open('data/(donghyun)countStar.csv', 'a') as csvfile:
-                    writer = csv.writer(csvfile)
-                    for data in json_parsed:
-                        writer.writerow([lang[0]]+[]+[data['stargazers_count']])
+                TopStarWriteCSV(lang,json_parsed)
                 next = FindLink(response,'next')
                 count_last += 1
             else:
@@ -160,10 +169,7 @@ for lang in lang_items:
             response, content = Request(url)
             if json.loads(content)['incomplete_results']==False:
                 json_parsed = json.loads(content)['items']
-                with open('data/(donghyun)countStar.csv', 'a') as csvfile:
-                    writer = csv.writer(csvfile)
-                    for data in json_parsed:
-                        writer.writerow([lang[0]]+[]+[data['stargazers_count']])
+                TopStarWriteCSV(lang,json_parsed)
                 try:
                     next = FindLink(response,'next')
                     last = FindLink(response,'last')
@@ -191,10 +197,7 @@ for lang in lang_items:
             if json.loads(content)['incomplete_results'] == False:
                 if int(json_parsed) != 0:
                     print count, json_parsed
-                    with open('data/(donghyun)countStar.csv','a') as csvfile:
-                        writer= csv.writer(csvfile)
-                        writer.writerow([lang[0]]+[str(count)]+[json_parsed])
-                        count-=1
+                    UnderStarWriteCSV(lang,count,json_parsed)
                 else:
                     raise NoresultError('No results')
             else:
