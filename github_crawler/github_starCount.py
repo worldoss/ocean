@@ -6,6 +6,27 @@ import csv
 import re
 from time import sleep
 
+class incompleteError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
+class NoresultError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
+def Request(url):
+    http = httplib2.Http()
+    id = 'rlrlaa123'
+    pw = 'ehehdd009'
+    auth = base64.encodestring(id + ':' + pw)
+    return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
+
 # 언어별 1000번째 저장소 star수
 lang_popular={
     'ActionScript':10,
@@ -94,26 +115,6 @@ lang_others={
     'Shen': 8, 'SRecode-Template': 10, 'Dogescript': 7, 'nesC': 6, 'Inno-Setup': 6
 }
 
-class incompleteError(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return self.msg
-
-class NoresultError(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return self.msg
-
-def Request(url):
-    http = httplib2.Http()
-    id = 'rlrlaa123'
-    pw = 'ehehdd009'
-    auth = base64.encodestring(id + ':' + pw)
-    return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
 
 def FindLink(response,which):
@@ -131,7 +132,10 @@ def NextPage(url,next,last):
             response, content = Request(next_url)
             if json.loads(content)['incomplete_results'] == False:
                 json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed,field_list)
+                with open('data/(donghyun)countStar.csv', 'a') as csvfile:
+                    writer = csv.writer(csvfile)
+                    for data in json_parsed:
+                        writer.writerow([lang[0]]+[]+[data['stargazers_count']])
                 next = FindLink(response,'next')
                 count_last += 1
             else:
@@ -142,44 +146,12 @@ def NextPage(url,next,last):
             print e
             sleep(2)
 
-def WriteCSV(json_parsed, field_name):
-    with open('data/(donghyun)countStar.csv', 'a') as csvfile:
-        fieldnames = []
-        fieldnames_dict = {}
-        for field in field_name:
-            fieldnames.append(field)
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        for data in json_parsed:
-            for field in field_name:
-                fieldnames_dict[field] = data[field]
-            try:
-                writer.writerow(fieldnames_dict)
-                fieldnames_dict = {}
-            except UnicodeEncodeError as e1:
-                try:
-                    print e1
-                    fieldnames_dict['description'] = fieldnames_dict['description'].encode('utf-8')
-                    writer.writerow(fieldnames_dict)
-                    fieldnames_dict = {}
-                except UnicodeEncodeError as e2:
-                    try:
-                        print e2
-                        fieldnames_dict['homepage'] = fieldnames_dict['homepage'].encode('utf-8')
-                        writer.writerow(fieldnames_dict)
-                        fieldnames_dict = {}
-                    except UnicodeEncodeError as e3:
-                        with open('data/(test)error_language.csv', 'a') as csvfile:
-                            errorwriter = csv.writer(csvfile)
-                            errorwriter.writerow([fieldnames_dict['full_name'], e3])
-                            writer.writerow({})
-                            fieldnames_dict = {}
-
 lang_thousand = {}
 lang_thousand.update(lang_popular)
 lang_thousand.update(lang_others)
 lang_items=lang_thousand.items()
 
-# Star Count First top 1000 stars respositories per language
+# # Star Count First top 1000 stars respositories per language
 for lang in lang_items:
     while True:
         url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang[0]+'"&per_page=100&sort=stars'
@@ -188,14 +160,17 @@ for lang in lang_items:
             response, content = Request(url)
             if json.loads(content)['incomplete_results']==False:
                 json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed, ['full_name','stargazers_count'])
+                with open('data/(donghyun)countStar.csv', 'a') as csvfile:
+                    writer = csv.writer(csvfile)
+                    for data in json_parsed:
+                        writer.writerow([lang[0]]+[]+[data['stargazers_count']])
                 try:
                     next = FindLink(response,'next')
                     last = FindLink(response,'last')
                     NextPage(url,next,last)
                     break
                 except KeyError as e:
-                    print e
+                    print 'no next'
                     break
             else:
                 raise incompleteError('Not incomplete results, try again')
