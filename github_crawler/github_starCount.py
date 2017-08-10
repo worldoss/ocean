@@ -1,10 +1,8 @@
 #-*- coding: utf-8 -*-
-
 import httplib2
 import json
 import base64
 import csv
-import re
 from time import sleep
 
 class incompleteError(Exception):
@@ -21,7 +19,74 @@ class NoresultError(Exception):
     def __str__(self):
         return self.msg
 
-# popular language 1000번째 star수
+def Request(url):
+    http = httplib2.Http()
+    id = 'rlrlaa123'
+    pw = 'ehehdd009'
+    auth = base64.encodestring(id + ':' + pw)
+    return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
+
+
+def FindLink(response,which):
+    if which == 'next':
+        return re.compile('([0-9]+)>; rel="next"').findall(response['link'])
+    elif which == 'last':
+        return re.compile('([0-9]+)>; rel="last"').findall(response['link'])
+
+def NextPage(url,next,last):
+    count_last = 2
+    while count_last<int(last[0])+1:
+        try:
+            next_url = url + '&page=' + str(next[0])
+            print next_url
+            response, content = Request(next_url)
+            if json.loads(content)['incomplete_results'] == False:
+                json_parsed = json.loads(content)['items']
+                WriteCSV(json_parsed,field_list)
+                next = FindLink(response,'next')
+                count_last += 1
+            else:
+                raise incompleteError('Not incomplete results, try again')
+        except incompleteError as e:
+            print e
+        except KeyError as e:
+            print e
+            sleep(2)
+
+def WriteCSV(json_parsed, field_name):
+    with open('data/(test)star_per_repository_language.csv', 'a') as csvfile:
+        fieldnames = []
+        fieldnames_dict = {}
+        for field in field_name:
+            fieldnames.append(field)
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        for data in json_parsed:
+            for field in field_name:
+                fieldnames_dict[field] = data[field]
+            print field_name
+            try:
+                writer.writerow(fieldnames_dict)
+                fieldnames_dict = {}
+            except UnicodeEncodeError as e1:
+                try:
+                    print e1
+                    fieldnames_dict['description'] = fieldnames_dict['description'].encode('utf-8')
+                    writer.writerow(fieldnames_dict)
+                    fieldnames_dict = {}
+                except UnicodeEncodeError as e2:
+                    try:
+                        print e2
+                        fieldnames_dict['homepage'] = fieldnames_dict['homepage'].encode('utf-8')
+                        writer.writerow(fieldnames_dict)
+                        fieldnames_dict = {}
+                    except UnicodeEncodeError as e3:
+                        with open('data/(test)error_language.csv', 'a') as csvfile:
+                            errorwriter = csv.writer(csvfile)
+                            errorwriter.writerow([fieldnames_dict['full_name'], e3])
+                            writer.writerow({})
+                            fieldnames_dict = {}
+
+# 언어별 1000번째 저장소 star수
 lang_popular={
     'ActionScript':10,
     'C':428,
@@ -49,8 +114,6 @@ lang_popular={
     'TeX':15,
     'Vim-script':59
 }
-
-# other language 1000번째 star수
 lang_others={
     'Mercury': 6, 'Mako': 6, 'TypeScript': 63, 'PureBasic': 6,
     'DTrace': 6, 'Self': 9, 'Lean': 6,
@@ -98,7 +161,7 @@ lang_others={
     'J': 9, 'Mask': 13, 'Genshi': 8, 'EmberScript': 10,
     'MoonScript': 6, 'LabVIEW': 6, 'TLA': 7, 'Nemerle': 6,
     'Cuda': 6, 'KRL': 12, 'Pony': 6, 'Scilab': 6, 'API-Blueprint': 6, "Ren'Py": 6, 'PostScript': 6,
-    'ChucK': 6, 'Grace': 15, 'ANTLR': 6, 'GDB': 6, 'F#': 36318, 'LoomScript': 207, 'OCaml': 9, 'Diff': 6,
+    'ChucK': 6, 'Grace': 15, 'ANTLR': 6, 'GDB': 6, 'LoomScript': 207, 'OCaml': 9, 'Diff': 6,
     'Yacc': 6, 'Fantom': 6, 'Zephir': 6, 'Smalltalk': 6, 'DM': 6, 'Ioke': 6, 'Monkey': 6, 'Gnuplot': 6,
     'Inform-7': 6, 'Apex': 6, 'LiveScript': 6, 'Mathematica': 6, 'QMake': 6, 'Rust': 41, 'ABAP': 6, 'Julia': 6,
     'Slash': 6, 'PicoLisp': 6, 'Erlang': 23, 'Pan': 6, 'LookML': 6, 'Eagle': 6, 'Scheme': 6, 'ooc': 6,
@@ -111,121 +174,29 @@ lang_others={
     'Shen': 8, 'SRecode-Template': 10, 'Dogescript': 7, 'nesC': 6, 'Inno-Setup': 6
 }
 
-errors="'HTML+ERB': 6553, 'HTML+EEX': 6553, 'HTML+PHP': 6553,'HTML+ECR': 6553,'HTML+Django': 6553,'NetLinx+ERB': 6553,'GAS': 6553, 'Objective-C++': 6553 "
-
-field_list=[
-    'id','name','full_name',
-    'owner','private','html_url',
-    'description','fork','url',
-    'forks_url','keys_url','keys_url',
-    'collaborators_url','teams_url','hooks_url',
-    'issue_events_url','events_url','assignees_url',
-    'branches_url','tags_url','blobs_url',
-    'git_tags_url','git_refs_url','trees_url',
-    'statuses_url','languages_url','stargazers_url',
-    'contributors_url','subscribers_url','subscription_url',
-    'commits_url','git_commits_url','comments_url',
-    'issue_comment_url','contents_url','compare_url',
-    'merges_url','archive_url','downloads_url',
-    'issues_url','pulls_url','milestones_url',
-    'notifications_url','labels_url','releases_url',
-    'deployments_url','created_at','updated_at',
-    'pushed_at','git_url','ssh_url',
-    'clone_url','svn_url','homepage',
-    'size','stargazers_count','watchers_count',
-    'language','has_issues','has_projects',
-    'has_downloads','has_wiki','has_pages',
-    'forks_count','mirror_url','open_issues_count',
-    'forks','open_issues','watchers',
-    'default_branch','permissions','score'
-]
-
-def Request(url):
-    http = httplib2.Http()
-    auth = base64.encodestring('rlrlaa123' + ':' + 'ehehdd009')
-    return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
-
-def WriteCSV(json_parsed,field_name):
-    with open('data/(test)star_per_repository_language.csv','a') as csvfile:
-        fieldnames = []
-        fieldnames_dict = {}
-        for field in field_name:
-            fieldnames.append(field)
-        writer = csv.DictWriter(csvfile,fieldnames=fieldnames)
-        for data in json_parsed:
-            for field in field_name:
-                fieldnames_dict[field]=data[field]
-            try:
-                writer.writerow(fieldnames_dict)
-                fieldnames_dict = {}
-            except UnicodeEncodeError as e1:
-                    try:
-                        print e1
-                        fieldnames_dict['description']=fieldnames_dict['description'].encode('utf-8')
-                        writer.writerow(fieldnames_dict)
-                        fieldnames_dict = {}
-                    except UnicodeEncodeError as e2:
-                        try:
-                            print e2
-                            fieldnames_dict['homepage']=fieldnames_dict['homepage'].encode('utf-8')
-                            writer.writerow(fieldnames_dict)
-                            fieldnames_dict = {}
-                        except UnicodeEncodeError as e3:
-                            with open('data/(test)error_language.csv', 'a') as csvfile:
-                                errorwriter = csv.writer(csvfile)
-                                errorwriter.writerow([fieldnames_dict['full_name'],e3])
-                                writer.writerow({})
-                                fieldnames_dict = {}
-
-
-def FindLink(response,which):
-    if which == 'next':
-        return re.compile('([0-9]+)>; rel="next"').findall(response['link'])
-    elif which == 'last':
-        return re.compile('([0-9]+)>; rel="last"').findall(response['link'])
-
-def NextPage(url,next,last):
-    count_last = 2
-    while count_last<int(last[0])+1:
-        try:
-            next_url = url + '&page=' + str(next[0])
-            print next_url
-            response, content = Request(next_url)
-            if json.loads(content)['incomplete_results'] == False:
-                json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed,field_list)
-                next = FindLink(response,'next')
-                count_last += 1
-            else:
-                raise incompleteError('Not incomplete results, try again')
-        except incompleteError as e:
-            print e
-        except KeyError as e:
-            print e
-            sleep(2)
-
 lang_thousand = {}
 lang_thousand.update(lang_popular)
 lang_thousand.update(lang_others)
+lang_items=lang_thousand.items()
+print lang_items
 
-# First top 1000 stars respositories per language
-lang_key = lang_thousand.keys()
-for lang in lang_key:
+# Star Count First top 1000 stars respositories per language
+for lang in lang_items:
     while True:
-        url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang+'"&per_page=100&sort=stars'
+        url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang[0]+'"&per_page=100&sort=stars'
         print url
         try:
             response, content = Request(url)
             if json.loads(content)['incomplete_results']==False:
-                print 'Respository count: '+str(json.loads(content)['total_count'])
                 json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed,field_list)
+                WriteCSV(json_parsed,['language','stargazers_count'])
                 try:
                     next = FindLink(response,'next')
-                    NextPage(url,next,[10])
+                    last = FindLink(response,'last')
+                    NextPage(url,next,last)
                     break
                 except KeyError as e:
-                    print 'no next page'
+                    print e
                     break
             else:
                 raise incompleteError('Not incomplete results, try again')
@@ -233,30 +204,31 @@ for lang in lang_key:
             print e
             sleep(2)
 
-# From 1001 top repository ~ 135252 top repository
-lang_value = lang_thousand.items()
-for lang in lang_value:
-    print lang
-    # 1001번째 star 수 부터 카운트
+
+# count by stars after 1000th repositories
+for lang in lang_items:
     count=lang[1]-1
-    while count>49:
-        url = 'https://api.github.com/search/repositories?q=stars:'+str(count)+'+language:"'+lang[0]+'"&per_page=100&sort=stars'
+    while count>5:
+        url = 'https://api.github.com/search/repositories?q=stars:'+str(count)+'+language:"'+lang[0]+'"&per_page=100'
         print url
         try:
             response, content = Request(url)
+            json_parsed =  json.loads(content)['total_count']
             if json.loads(content)['incomplete_results'] == False:
-                print 'Repository count: '+str(json.loads(content)['total_count'])
-                json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed,field_list)
-                try:
-                    next = FindLink(response,'next')
-                    last = FindLink(response,'last')
-                    NextPage(url,next,last)
-                except KeyError as e:
-                    print e
+                if int(json_parsed) != 0:
+                    print count, json_parsed
+                    with open('data/(test)1000_star_per_repository_language.csv','a') as csvfile:
+                        writer= csv.writer(csvfile)
+                        writer.writerow([lang[0]]+[str(count)]+[json_parsed])
+                        count-=1
+                else:
+                    raise NoresultError('No results')
             else:
-                print 'incomplete result'
-            count -= 1
-        except KeyError as e:
+                raise incompleteError('Incomplete results, try again')
+        except incompleteError as e:
             print e
-            sleep(2)
+        except NoresultError as e:
+            count-=1
+            print e
+        except KeyError:
+            sleep(1)
