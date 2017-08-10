@@ -4,6 +4,7 @@ import json
 import base64
 import csv
 import re
+import datetime
 from time import sleep
 
 class incompleteError(Exception):
@@ -127,12 +128,13 @@ def TopStarWriteCSV(lang,json_parsed):
     with open('data/(donghyun)countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
         for data in json_parsed:
-            writer.writerow([lang[0]] + [data['stargazers_count']] + [1])
+            writer.writerow([lang[0]] + [data['stargazers_count']] + [1]+[datetime.datetime.now()])
+
 # 저장할 csv 파일명 수정 (TopStarWriteCSV csv 파일명과 일치!)
 def UnderStarWriteCSV(lang,count,json_parsed):
     with open('data/(donghyun)countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow([lang[0]] + [str(count)] + [json_parsed])
+        writer.writerow([lang[0]] + [str(count)] + [json_parsed] + [datetime.datetime.now()])
         count -= 1
 
 def NextPage(url,next,last):

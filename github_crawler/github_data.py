@@ -227,7 +227,7 @@ CreateCSV()
 lang_key = lang_thousand.keys()
 for lang in lang_key:
     while True:
-        url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang+'"&per_page=100&sort=stars'
+        url = 'https://api.github.com/search/repositories?q=stars:>50+language:"'+lang+'"&per_page=100&sort=stars'
         print url
         try:
             response, content = Request(url)
