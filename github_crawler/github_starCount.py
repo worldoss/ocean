@@ -3,88 +3,8 @@ import httplib2
 import json
 import base64
 import csv
+import re
 from time import sleep
-
-class incompleteError(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return self.msg
-
-class NoresultError(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return self.msg
-
-def Request(url):
-    http = httplib2.Http()
-    id = 'rlrlaa123'
-    pw = 'ehehdd009'
-    auth = base64.encodestring(id + ':' + pw)
-    return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
-
-
-def FindLink(response,which):
-    if which == 'next':
-        return re.compile('([0-9]+)>; rel="next"').findall(response['link'])
-    elif which == 'last':
-        return re.compile('([0-9]+)>; rel="last"').findall(response['link'])
-
-def NextPage(url,next,last):
-    count_last = 2
-    while count_last<int(last[0])+1:
-        try:
-            next_url = url + '&page=' + str(next[0])
-            print next_url
-            response, content = Request(next_url)
-            if json.loads(content)['incomplete_results'] == False:
-                json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed,field_list)
-                next = FindLink(response,'next')
-                count_last += 1
-            else:
-                raise incompleteError('Not incomplete results, try again')
-        except incompleteError as e:
-            print e
-        except KeyError as e:
-            print e
-            sleep(2)
-
-def WriteCSV(json_parsed, field_name):
-    with open('data/(test)star_per_repository_language.csv', 'a') as csvfile:
-        fieldnames = []
-        fieldnames_dict = {}
-        for field in field_name:
-            fieldnames.append(field)
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        for data in json_parsed:
-            for field in field_name:
-                fieldnames_dict[field] = data[field]
-            print field_name
-            try:
-                writer.writerow(fieldnames_dict)
-                fieldnames_dict = {}
-            except UnicodeEncodeError as e1:
-                try:
-                    print e1
-                    fieldnames_dict['description'] = fieldnames_dict['description'].encode('utf-8')
-                    writer.writerow(fieldnames_dict)
-                    fieldnames_dict = {}
-                except UnicodeEncodeError as e2:
-                    try:
-                        print e2
-                        fieldnames_dict['homepage'] = fieldnames_dict['homepage'].encode('utf-8')
-                        writer.writerow(fieldnames_dict)
-                        fieldnames_dict = {}
-                    except UnicodeEncodeError as e3:
-                        with open('data/(test)error_language.csv', 'a') as csvfile:
-                            errorwriter = csv.writer(csvfile)
-                            errorwriter.writerow([fieldnames_dict['full_name'], e3])
-                            writer.writerow({})
-                            fieldnames_dict = {}
 
 # 언어별 1000번째 저장소 star수
 lang_popular={
@@ -174,11 +94,90 @@ lang_others={
     'Shen': 8, 'SRecode-Template': 10, 'Dogescript': 7, 'nesC': 6, 'Inno-Setup': 6
 }
 
+class incompleteError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
+class NoresultError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
+def Request(url):
+    http = httplib2.Http()
+    id = 'rlrlaa123'
+    pw = 'ehehdd009'
+    auth = base64.encodestring(id + ':' + pw)
+    return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
+
+
+def FindLink(response,which):
+    if which == 'next':
+        return re.compile('([0-9]+)>; rel="next"').findall(response['link'])
+    elif which == 'last':
+        return re.compile('([0-9]+)>; rel="last"').findall(response['link'])
+
+def NextPage(url,next,last):
+    count_last = 2
+    while count_last<int(last[0])+1:
+        try:
+            next_url = url + '&page=' + str(next[0])
+            print next_url
+            response, content = Request(next_url)
+            if json.loads(content)['incomplete_results'] == False:
+                json_parsed = json.loads(content)['items']
+                WriteCSV(json_parsed,field_list)
+                next = FindLink(response,'next')
+                count_last += 1
+            else:
+                raise incompleteError('Not incomplete results, try again')
+        except incompleteError as e:
+            print e
+        except KeyError as e:
+            print e
+            sleep(2)
+
+def WriteCSV(json_parsed, field_name):
+    with open('data/(donghyun)countStar.csv', 'a') as csvfile:
+        fieldnames = []
+        fieldnames_dict = {}
+        for field in field_name:
+            fieldnames.append(field)
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        for data in json_parsed:
+            for field in field_name:
+                fieldnames_dict[field] = data[field]
+            try:
+                writer.writerow(fieldnames_dict)
+                fieldnames_dict = {}
+            except UnicodeEncodeError as e1:
+                try:
+                    print e1
+                    fieldnames_dict['description'] = fieldnames_dict['description'].encode('utf-8')
+                    writer.writerow(fieldnames_dict)
+                    fieldnames_dict = {}
+                except UnicodeEncodeError as e2:
+                    try:
+                        print e2
+                        fieldnames_dict['homepage'] = fieldnames_dict['homepage'].encode('utf-8')
+                        writer.writerow(fieldnames_dict)
+                        fieldnames_dict = {}
+                    except UnicodeEncodeError as e3:
+                        with open('data/(test)error_language.csv', 'a') as csvfile:
+                            errorwriter = csv.writer(csvfile)
+                            errorwriter.writerow([fieldnames_dict['full_name'], e3])
+                            writer.writerow({})
+                            fieldnames_dict = {}
+
 lang_thousand = {}
 lang_thousand.update(lang_popular)
 lang_thousand.update(lang_others)
 lang_items=lang_thousand.items()
-print lang_items
 
 # Star Count First top 1000 stars respositories per language
 for lang in lang_items:
@@ -189,7 +188,7 @@ for lang in lang_items:
             response, content = Request(url)
             if json.loads(content)['incomplete_results']==False:
                 json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed,['language','stargazers_count'])
+                WriteCSV(json_parsed, ['full_name','stargazers_count'])
                 try:
                     next = FindLink(response,'next')
                     last = FindLink(response,'last')
@@ -217,7 +216,7 @@ for lang in lang_items:
             if json.loads(content)['incomplete_results'] == False:
                 if int(json_parsed) != 0:
                     print count, json_parsed
-                    with open('data/(test)1000_star_per_repository_language.csv','a') as csvfile:
+                    with open('data/(donghyun)countStar.csv','a') as csvfile:
                         writer= csv.writer(csvfile)
                         writer.writerow([lang[0]]+[str(count)]+[json_parsed])
                         count-=1
