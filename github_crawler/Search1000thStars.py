@@ -1,5 +1,12 @@
 #-*- coding: utf-8 -*-
 
+# Search 수를 최소화 하기 위해 search 결과 중 가장 낮은 수의 스타 수를 구해야 함
+# Other Language의 경우, 너무 많기 때문에 웹에서 리스트를 크롤링 해오고, 그 리스트를
+# 사용해서, 결과 중 가장 낮은 수의 스타 수를 구함
+
+# 리스트를 구한 후 띄어쓰기를 없애줘야하고, 각종 에러가 발생하는 언어들을 걸러줘야 하기 때문에
+# 결과값은 콘솔에만 print 됨
+
 import httplib2
 import json
 import base64
@@ -9,7 +16,7 @@ from bs4 import BeautifulSoup
 import urllib
 import re
 
-# Write Github id and pw
+# Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
     auth = base64.encodestring('id' + ':' + 'pw')
@@ -21,24 +28,22 @@ def FindLink(response,which):
     elif which == 'last':
         return re.compile('([0-9]+)>; rel="last"').findall(response['link'])
 
-# Get Other Language list from Github website (it will be printed in console)
+# Other Language 리스트를 웹에서 불러옴 (콘솔에 출력)
 def OtherLanguageFromWeb():
     fp = urllib.urlopen('https://github.com/search/advanced')
     source = fp.read()
     fp.close()
     soup = BeautifulSoup(source, 'html.parser')
-    # print soup.prettify()
-
     li = re.compile('<option value="(.+)">').findall(soup.prettify())
 
-    d = []
-
+    lang_others = []
     for strin in li:
-        d.append(str(strin))
+        lang_others.append(str(strin))
 
-    print d
+    print lang_others
 
-# Get Other Language's 1000th stars (it will be printed in console)
+# Other Language 중 search 결과 중 가장 낮은 수의 스타 수 구함 (콘솔에 출력)
+# 띄어쓰기가 들어간 언어의 경우 blankList.csv라는 파일에 리스트가 저장됨, 리스트에서 이러한 언어들의 띄어쓰기를 '-'로 대체해 줘야함
 def GetOtherLanguage1000thStar():
     lang_others_dict={}
     # 428 languages
@@ -121,7 +126,6 @@ def GetOtherLanguage1000thStar():
                             last_url = url + '&page='+last[0]
                             print last_url
                             response, content = Request(last_url)
-                            # print json.loads(content)['items'][-1]
                             star=json.loads(content)['items'][-1]['stargazers_count']
                             print star
                             lang_others_dict[lang]=star
@@ -136,8 +140,6 @@ def GetOtherLanguage1000thStar():
                 print 'limit reached...'
                 print e
                 sleep(2)
-            # After crawling language lists from web, there is blank issues, blank should be replace with '-'
-            # All the languages with blank is saved in blankList.csv
             except ValueError as e:
                 print 'blank error\n'+lang
                 print e
@@ -150,7 +152,7 @@ def GetOtherLanguage1000thStar():
 
 GetOtherLanguage1000thStar()
 
-# These are results
+# 결과값 (단, 사용시 에러가 발생하는 언어들을 걸러줘야함.)
 result={
     'Mercury': 6, 'Mako': 6, 'TypeScript': 63, 'PureBasic': 6,
     'Objective-C++': 6553, 'DTrace': 6, 'Self': 9, 'Lean': 6,

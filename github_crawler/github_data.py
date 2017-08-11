@@ -1,5 +1,10 @@
 #-*- coding: utf-8 -*-
 
+# 앞서 github_starCount를 통해 선정된 스타 수를 기준으로 데이터 수집
+
+# 먼저, 먼저, search로 나오는 가장 스타가 높은 저장소들을 모으고, 그 이후의 저장소들을 스타 수 50까지 구함
+# Github 로그인 ID PW를 입력하고, 저장소들을 저장할 CSV명을 입력해야함
+
 import httplib2
 import json
 import base64
@@ -22,7 +27,7 @@ class NoresultError(Exception):
     def __str__(self):
         return self.msg
 
-# popular language 1000번째 star수
+# Popular Language 1000번째 스타 수
 lang_popular={
     'ActionScript':10,
     'C':428,
@@ -51,7 +56,7 @@ lang_popular={
     'Vim-script':59
 }
 
-# other language 1000번째 star수
+# 에러가 발생하는 언어들을 걸러낸 Other Language 리스트
 lang_others={
     'Mercury': 6, 'Mako': 6, 'PureBasic': 6,
     'DTrace': 6, 'Self': 9, 'Lean': 6,
@@ -220,15 +225,14 @@ def NextPage(url,next,last):
             print e
             sleep(2)
 
-# Connect popular language and other language
 lang_thousand = {}
 lang_thousand.update(lang_popular)
 lang_thousand.update(lang_others)
 
-# Write field headers
+# CSV파일 초기화
 CreateCSV()
 
-# First top 1000 stars respositories per language
+# Language 별 스타 수 1000번째 까지의 저장소
 lang_key = lang_thousand.keys()
 for lang in lang_key:
     while True:
@@ -254,7 +258,7 @@ for lang in lang_key:
             print e
             sleep(2)
 
-# # From 1001 top repository ~ 135252 top repository
+# 1000번째 스타 수 이후의 51번째 까지의 저장소
 lang_value = lang_thousand.items()
 for lang in lang_value:
     print lang

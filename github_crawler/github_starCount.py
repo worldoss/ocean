@@ -1,4 +1,10 @@
 #-*- coding: utf-8 -*-
+
+# 스타 순위별로 저장소들을 정렬하고, 원하는 저장소의 양만큼이 몇 star 이상인지 알아내는 작업
+
+# 먼저, search로 나오는 가장 스타가 높은 저장소들을 구하고, 그 이후의 스타 별 저장소 갯수를 카운트함
+# Github 로그인 ID PW 입력해주어야 하고 저장할 CSV 파일명들의 경로를 수정해주어야 한다
+
 import httplib2
 import json
 import base64
@@ -21,14 +27,15 @@ class NoresultError(Exception):
     def __str__(self):
         return self.msg
 
+# Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    id = 'rlrlaa123'
-    pw = 'ehehdd009'
+    id = 'id'
+    pw = 'pw'
     auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
-# 언어별 1000번째 저장소 star수
+# 언어별 1000번째 저장소 스타수
 lang_popular={
     'ActionScript':10,
     'C':428,
@@ -57,6 +64,7 @@ lang_popular={
     'Vim-script':59
 }
 
+# 에러가 발생하는 언어들을 걸러낸 Other Language 리스트
 lang_others={
     'Mercury': 6, 'Mako': 6, 'PureBasic': 6,
     'DTrace': 6, 'Self': 9, 'Lean': 6,
@@ -161,7 +169,7 @@ lang_thousand.update(lang_popular)
 lang_thousand.update(lang_others)
 lang_items=lang_thousand.items()
 
-# # Star Count First top 1000 stars respositories per language
+# Search 결과로 나오는 가장 높은 순위의 저장소들
 for lang in lang_items:
     while True:
         url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang[0]+'"&per_page=100&sort=stars'
@@ -186,7 +194,7 @@ for lang in lang_items:
             sleep(2)
 
 
-# count by stars after 1000th repositories
+# 1000번째 저장소 이후의 스타수 별 저장소 수
 for lang in lang_items:
     count=lang[1]-1
     while count>5:
