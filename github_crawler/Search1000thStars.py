@@ -9,9 +9,10 @@ from bs4 import BeautifulSoup
 import urllib
 import re
 
+# Write Github id and pw
 def Request(url):
     http = httplib2.Http()
-    auth = base64.encodestring('rlrlaa123' + ':' + 'ehehdd009')
+    auth = base64.encodestring('id' + ':' + 'pw')
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
 def FindLink(response,which):
@@ -20,6 +21,7 @@ def FindLink(response,which):
     elif which == 'last':
         return re.compile('([0-9]+)>; rel="last"').findall(response['link'])
 
+# Get Other Language list from Github website (it will be printed in console)
 def OtherLanguageFromWeb():
     fp = urllib.urlopen('https://github.com/search/advanced')
     source = fp.read()
@@ -36,6 +38,7 @@ def OtherLanguageFromWeb():
 
     print d
 
+# Get Other Language's 1000th stars (it will be printed in console)
 def GetOtherLanguage1000thStar():
     lang_others_dict={}
     # 428 languages
@@ -90,7 +93,8 @@ def GetOtherLanguage1000thStar():
         'Smalltalk', 'Smarty', 'SMT', 'SourcePawn', 'SPARQL', 'Spline-Font-Database', 'SQF', 'SQL', 'SQLPL',
         'Squirrel', 'SRecode-Template', 'Stan', 'Standard-ML', 'Stata', 'STON', 'Stylus', 'Sublime-Text-Config',
         'SubRip-Text', 'SuperCollider', 'SVG', 'SystemVerilog', 'Tcl', 'Tcsh', 'Tea', 'Terra', 'Text', 'Textile',
-        'Thrift', 'TI-Program', 'TLA', 'TOML', 'Turing', 'Turtle', 'Twig', 'TXL', 'Type-Language', 'TypeScript',
+        'Thrift', 'TI-Program', 'TLA', 'TOML', 'Turing', 'Turtle', 'Twig', 'TXL',
+        'Type-Language', 'TypeScript',
         'Unified-Parallel-C', 'Unity3D-Asset', 'Unix-Assembly', 'Uno', 'UnrealScript', 'UrWeb', 'Vala', 'VCL',
         'Verilog', 'VHDL', 'Visual-Basic', 'Volt', 'Vue', 'Wavefront-Material', 'Wavefront-Object', 'Web-Ontology-Language',
         'WebAssembly', 'WebIDL', 'wisp', 'World-of-Warcraft-Addon-Data', 'X10', 'xBase', 'XC', 'XCompose',
@@ -115,7 +119,9 @@ def GetOtherLanguage1000thStar():
                             print 'several pages'
                             last = FindLink(response,'last')
                             last_url = url + '&page='+last[0]
+                            print last_url
                             response, content = Request(last_url)
+                            # print json.loads(content)['items'][-1]
                             star=json.loads(content)['items'][-1]['stargazers_count']
                             print star
                             lang_others_dict[lang]=star
@@ -144,6 +150,7 @@ def GetOtherLanguage1000thStar():
 
 GetOtherLanguage1000thStar()
 
+# These are results
 result={
     'Mercury': 6, 'Mako': 6, 'TypeScript': 63, 'PureBasic': 6,
     'Objective-C++': 6553, 'DTrace': 6, 'Self': 9, 'Lean': 6,

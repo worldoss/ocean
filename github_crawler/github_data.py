@@ -113,7 +113,7 @@ lang_others={
 }
 
 # Excluded languages for unsolvable errors
-errors="'TypeScript':65,'KiCad':6,'F#': 36318, 'HTML+ERB': 6553, 'HTML+EEX': 6553, 'HTML+PHP': 6553,'HTML+ECR': 6553,'HTML+Django': 6553,'NetLinx+ERB': 6553,'GAS': 6553, 'Objective-C++': 6553 "
+errors="'HTTP':6,'TypeScript':65,'KiCad':6,'F#': 36318, 'HTML+ERB': 6553, 'HTML+EEX': 6553, 'HTML+PHP': 6553,'HTML+ECR': 6553,'HTML+Django': 6553,'NetLinx+ERB': 6553,'GAS': 6553, 'Objective-C++': 6553 "
 
 field_list=[
     'id','name','full_name',
@@ -142,9 +142,10 @@ field_list=[
     'default_branch','permissions','score'
 ]
 
+# Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    auth = base64.encodestring('rlrlaa123' + ':' + 'ehehdd009')
+    auth = base64.encodestring('id' + ':' + 'pw')
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
 # 저장할 csv 파일명 수정
@@ -172,17 +173,21 @@ def WriteCSV(json_parsed,field_name):
                 fieldnames_dict = {}
             except UnicodeEncodeError as e1:
                     try:
-                        print e1
                         fieldnames_dict['description']=fieldnames_dict['description'].encode('utf-8')
                         writer.writerow(fieldnames_dict)
                         fieldnames_dict = {}
                     except UnicodeEncodeError as e2:
                         try:
-                            print e2
                             fieldnames_dict['homepage']=fieldnames_dict['homepage'].encode('utf-8')
                             writer.writerow(fieldnames_dict)
                             fieldnames_dict = {}
                         except UnicodeEncodeError as e3:
+                            with open('data/(test)error_language.csv', 'a') as csvfile:
+                                errorwriter = csv.writer(csvfile)
+                                errorwriter.writerow([fieldnames_dict['full_name'],e3])
+                                writer.writerow({})
+                                fieldnames_dict = {}
+                        except AttributeError:
                             with open('data/(test)error_language.csv', 'a') as csvfile:
                                 errorwriter = csv.writer(csvfile)
                                 errorwriter.writerow([fieldnames_dict['full_name'],e3])

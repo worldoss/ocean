@@ -135,7 +135,6 @@ def UnderStarWriteCSV(lang,count,json_parsed):
     with open('data/(donghyun)countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([lang[0]] + [str(count)] + [json_parsed] + [datetime.datetime.now()])
-        count -= 1
 
 def NextPage(url,next,last):
     count_last = 2
@@ -200,6 +199,7 @@ for lang in lang_items:
                 if int(json_parsed) != 0:
                     print count, json_parsed
                     UnderStarWriteCSV(lang,count,json_parsed)
+                    count-=1
                 else:
                     raise NoresultError('No results')
             else:
