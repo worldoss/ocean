@@ -125,7 +125,7 @@ lang_others={
     'HTTP':6,'TypeScript':65,'KiCad':6,'F#': 36318, 'HTML+ERB': 6553, 'HTML+EEX': 6553, 'HTML+PHP': 6553,'HTML+ECR': 6553,'HTML+Django': 6553,'NetLinx+ERB': 6553,'GAS': 6553, 'Objective-C++': 6553
 }
 
-# Excluded languages for unsolvable errors
+# search 에러가 발생할 언어들을 걸러낸 리스트
 error_language=[]
 
 field_list=[
