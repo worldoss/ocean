@@ -27,6 +27,13 @@ class NoresultError(Exception):
     def __str__(self):
         return self.msg
 
+class LanguageError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
 # Popular Language 1000번째 스타 수
 lang_popular={
     'ActionScript':10,
@@ -40,7 +47,7 @@ lang_popular={
     'Haskell':35,
     'HTML':322,
     'Java':1270,
-    'Javascript':2908,
+    'JavaScript':2908,
     'Lua':36,
     'Matlab':9,
     'Objective-C':716,
@@ -114,11 +121,12 @@ lang_others={
     'CLIPS': 6, 'CartoCSS': 6, 'Perl-6': 6, 'Clean': 7, 'Alloy': 6, 'Puppet': 6, 'CWeb': 98,
     "Cap'n-Proto": 6, 'REALbasic': 6, 'PLSQL': 6, 'PAWN': 6, 'UnrealScript': 6, 'Pep8': 16, 'Augeas': 13,
     'SQL': 6, 'PureScript': 6, 'Fancy': 6, 'PowerShell': 11, 'Bro': 6, 'wisp': 6, 'NCL': 15, 'Io': 6, 'Racket': 6,
-    'Shen': 8, 'SRecode-Template': 10, 'Dogescript': 7, 'nesC': 6, 'Inno-Setup': 6
+    'Shen': 8, 'SRecode-Template': 10, 'Dogescript': 7, 'nesC': 6, 'Inno-Setup': 6,
+    'HTTP':6,'TypeScript':65,'KiCad':6,'F#': 36318, 'HTML+ERB': 6553, 'HTML+EEX': 6553, 'HTML+PHP': 6553,'HTML+ECR': 6553,'HTML+Django': 6553,'NetLinx+ERB': 6553,'GAS': 6553, 'Objective-C++': 6553
 }
 
 # Excluded languages for unsolvable errors
-errors="'HTTP':6,'TypeScript':65,'KiCad':6,'F#': 36318, 'HTML+ERB': 6553, 'HTML+EEX': 6553, 'HTML+PHP': 6553,'HTML+ECR': 6553,'HTML+Django': 6553,'NetLinx+ERB': 6553,'GAS': 6553, 'Objective-C++': 6553 "
+error_language=[]
 
 field_list=[
     'id','name','full_name',
@@ -157,13 +165,13 @@ def Request(url):
 
 # 저장할 csv 파일명 수정
 def CreateCSV():
-    with open('data/(test)star_per_repository_language.csv', 'a') as csvfile:
+    with open('data/(test)Repository_data.csv', 'a') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=field_list)
         writer.writeheader()
 
 # 저장할 csv 파일명 수정 (CreateCSV csv 파일명과 일치!) + error log 저장할 csv 파일명 따로 수정
 def WriteCSV(json_parsed,field_name):
-    with open('data/(test)star_per_repository_language.csv','a') as csvfile:
+    with open('data/(test)Repository_data.csv','a') as csvfile:
         fieldnames = []
         fieldnames_dict = {}
         for field in field_name:
@@ -183,21 +191,21 @@ def WriteCSV(json_parsed,field_name):
                         fieldnames_dict['description']=fieldnames_dict['description'].encode('utf-8')
                         writer.writerow(fieldnames_dict)
                         fieldnames_dict = {}
-                    except UnicodeEncodeError as e2:
+                    except UnicodeEncodeError:
                         try:
                             fieldnames_dict['homepage']=fieldnames_dict['homepage'].encode('utf-8')
                             writer.writerow(fieldnames_dict)
                             fieldnames_dict = {}
                         except UnicodeEncodeError as e3:
-                            with open('data/(test)error_language.csv', 'a') as csvfile:
+                            with open('data/error_language.csv', 'a') as csvfile:
                                 errorwriter = csv.writer(csvfile)
                                 errorwriter.writerow([fieldnames_dict['full_name'],e3])
                                 writer.writerow({})
                                 fieldnames_dict = {}
-                        except AttributeError:
-                            with open('data/(test)error_language.csv', 'a') as csvfile:
+                        except AttributeError as e4:
+                            with open('data/error_language.csv', 'a') as csvfile:
                                 errorwriter = csv.writer(csvfile)
-                                errorwriter.writerow([fieldnames_dict['full_name'],e3])
+                                errorwriter.writerow([fieldnames_dict['full_name'],e4])
                                 writer.writerow({})
                                 fieldnames_dict = {}
 
@@ -206,6 +214,11 @@ def FindLink(response,which):
         return re.compile('([0-9]+)>; rel="next"').findall(response['link'])
     elif which == 'last':
         return re.compile('([0-9]+)>; rel="last"').findall(response['link'])
+
+# 에러 발생 언어 제외
+def ExcludeErrorLanguage(lang):
+    for error in error_language:
+        lang.pop(error)
 
 def NextPage(url,next,last):
     count_last = 2
@@ -238,32 +251,51 @@ CreateCSV()
 lang_key = lang_thousand.keys()
 for lang in lang_key:
     while True:
-        url = 'https://api.github.com/search/repositories?q=stars:>50+language:"'+lang+'"&per_page=100&sort=stars'
+        url = 'https://api.github.com/search/repositories?q=stars:>50+language:"'+str(lang)+'"&per_page=100&sort=stars'
         print url
         try:
             response, content = Request(url)
             if json.loads(content)['incomplete_results']==False:
                 print 'Respository count: '+str(json.loads(content)['total_count'])
-                json_parsed = json.loads(content)['items']
-                WriteCSV(json_parsed,field_list)
-                try:
-                    next = FindLink(response,'next')
-                    last = FindLink(response,'last')
-                    NextPage(url,next,last)
-                    break
-                except KeyError as e:
-                    print 'No next page'
-                    break
+                if json.loads(content)['total_count'] != 0:
+                    json_parsed = json.loads(content)['items']
+                    if json_parsed[0]['language'] == lang or json_parsed[0]['language'] == 'C++' or json_parsed[0]['language'] == 'C#': # C++과 C#은 search 단어가 다르기 때문에 제외
+                        WriteCSV(json_parsed,field_list)
+                        try:
+                            next = FindLink(response,'next')
+                            last = FindLink(response,'last')
+                            # NextPage(url,next,last)
+                            break
+                        except KeyError as e:
+                            print 'No next page'
+                            break
+                    else:
+                        raise LanguageError('Language miss-match')
+                else:
+                    raise NoresultError('No repository result')
             else:
                 raise IncompleteError('Incomplete results, try again')
         except IncompleteError as e:
             print e
+        except NoresultError as e:
+            print e
+            break
+        except LanguageError as e:
+            print e
+            with open('error_language.csv', 'a') as csvfile:
+                errorwriter = csv.writer(csvfile)
+                errorwriter.writerow([lang,e])
+                error_language.append(lang)
+            break
         except KeyError as e:
             print 'Limit reached...'
             sleep(2)
 
+ExcludeErrorLanguage(lang_thousand)
+
 # 1000번째 스타 수 이후의 51번째 까지의 저장소
 lang_value = lang_thousand.items()
+print lang_value
 for lang in lang_value:
     print lang
     # 1001번째 star 수 부터 카운트
