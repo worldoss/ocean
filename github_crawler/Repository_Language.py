@@ -7,6 +7,8 @@
 # 리스트를 구한 후 띄어쓰기를 없애줘야하고, 각종 에러가 발생하는 언어들을 걸러줘야 하기 때문에
 # 결과값은 콘솔에만 print 됨
 
+# 소요시간: 약 30분
+
 import httplib2
 import json
 import base64
@@ -33,8 +35,8 @@ class NoresultError(Exception):
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    id = 'rlrlaa123'
-    pw = 'ehehdd009'
+    id = ''
+    pw = ''
     auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 

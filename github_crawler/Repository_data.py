@@ -158,8 +158,8 @@ field_list=[
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    id = 'rlrlaa123'
-    pw = 'ehehdd009'
+    id = ''
+    pw = ''
     auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
@@ -214,11 +214,6 @@ def FindLink(response,which):
         return re.compile('([0-9]+)>; rel="next"').findall(response['link'])
     elif which == 'last':
         return re.compile('([0-9]+)>; rel="last"').findall(response['link'])
-
-# 에러 발생 언어 제외
-def ExcludeErrorLanguage(lang):
-    for error in error_language:
-        lang.pop(error)
 
 def NextPage(url,next,last):
     count_last = 2
@@ -291,7 +286,9 @@ for lang in lang_key:
             print 'Limit reached...'
             sleep(2)
 
-ExcludeErrorLanguage(lang_thousand)
+# 에러 발생 언어 제외
+for error in error_language:
+    lang_thousand.pop(error)
 
 # 1000번째 스타 수 이후의 51번째 까지의 저장소
 lang_value = lang_thousand.items()
