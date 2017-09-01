@@ -27,11 +27,18 @@ class NoresultError(Exception):
     def __str__(self):
         return self.msg
 
+class LanguageError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    id = ''
-    pw = ''
+    id = 'rlrlaa123'
+    pw = 'ehehdd009'
     auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
@@ -48,7 +55,7 @@ lang_popular={
     'Haskell':35,
     'HTML':322,
     'Java':1270,
-    'Javascript':2908,
+    'JavaScript':2908,
     'Lua':36,
     'Matlab':9,
     'Objective-C':716,
@@ -125,6 +132,9 @@ lang_others={
     'Shen': 8, 'SRecode-Template': 10, 'Dogescript': 7, 'nesC': 6, 'Inno-Setup': 6
 }
 
+# search 에러가 발생하는 언어들을 걸러낼 리스트
+error_language=[]
+
 def FindLink(response,which):
     if which == 'next':
         return re.compile('([0-9]+)>; rel="next"').findall(response['link'])
@@ -133,14 +143,14 @@ def FindLink(response,which):
 
 # 저장할 csv 파일명 수정
 def TopStarWriteCSV(lang,json_parsed):
-    with open('data/(test)countStar.csv', 'a') as csvfile:
+    with open('countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
         for data in json_parsed:
             writer.writerow([lang[0]] + [data['stargazers_count']] + [1]+[datetime.datetime.now()])
 
 # 저장할 csv 파일명 수정 (TopStarWriteCSV csv 파일명과 일치!)
 def UnderStarWriteCSV(lang,count,json_parsed):
-    with open('data/(test)countStar.csv', 'a') as csvfile:
+    with open('countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([lang[0]] + [str(count)] + [json_parsed] + [datetime.datetime.now()])
 
@@ -178,22 +188,36 @@ for lang in lang_items:
             response, content = Request(url)
             if json.loads(content)['incomplete_results']==False:
                 json_parsed = json.loads(content)['items']
-                TopStarWriteCSV(lang,json_parsed)
-                try:
-                    next = FindLink(response,'next')
-                    last = FindLink(response,'last')
-                    NextPage(url,next,last)
-                    break
-                except KeyError:
-                    print 'No next page'
-                    break
+                if json_parsed[0]['language'] == lang[0] or json_parsed[0]['language'] == 'C++' or json_parsed[0]['language'] == 'C#':  # C++과 C#은 search 단어가 다르기 때문에 제외
+                    TopStarWriteCSV(lang,json_parsed)
+                    try:
+                        next = FindLink(response,'next')
+                        last = FindLink(response,'last')
+                        NextPage(url,next,last)
+                        break
+                    except KeyError:
+                        print 'No next page'
+                        break
+                else:
+                    raise LanguageError('Language miss-match')
             else:
                 raise IncompleteError('Incomplete results, try again')
         except IncompleteError as e:
             print e
+        except LanguageError as e:
+            print e
+            with open('error_language.csv', 'a') as csvfile:
+                errorwriter = csv.writer(csvfile)
+                errorwriter.writerow([lang[0],e])
+                error_language.append(lang[0])
+            break
         except KeyError:
             print 'Limit reached...'
             sleep(2)
+
+# 에러 발생 언어 제외
+for error in error_language:
+    lang_items.pop(error)
 
 # 1000번째 저장소 이후의 스타수 별 저장소 수
 for lang in lang_items:
