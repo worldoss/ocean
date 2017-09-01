@@ -5,6 +5,8 @@
 # 먼저, search로 나오는 가장 스타가 높은 저장소들을 구하고, 그 이후의 스타 별 저장소 갯수를 카운트함
 # Github 로그인 ID PW 입력해주어야 하고 저장할 CSV 파일명들의 경로를 수정해주어야 한다
 
+# 소요시간: 약 9~10시간
+
 import httplib2
 import json
 import base64
@@ -37,8 +39,8 @@ class LanguageError(Exception):
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    id = 'rlrlaa123'
-    pw = 'ehehdd009'
+    id = ''
+    pw = ''
     auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 

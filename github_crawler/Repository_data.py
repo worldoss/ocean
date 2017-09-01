@@ -5,6 +5,8 @@
 # 먼저, 먼저, search로 나오는 가장 스타가 높은 저장소들을 모으고, 그 이후의 저장소들을 스타 수 50까지 구함
 # Github 로그인 ID PW를 입력하고, 저장소들을 저장할 CSV명을 입력해야함
 
+# 소요시간: 9~10시간
+
 import httplib2
 import json
 import base64
