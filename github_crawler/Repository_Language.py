@@ -33,8 +33,8 @@ class NoresultError(Exception):
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    id = ''
-    pw = ''
+    id = 'rlrlaa123'
+    pw = 'ehehdd009'
     auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
@@ -50,77 +50,24 @@ def OtherLanguageFromWeb():
     source = fp.read()
     fp.close()
     soup = BeautifulSoup(source, 'html.parser')
-    li = re.compile('<option value="(.+)">').findall(soup.prettify())
+    lang_list = re.compile('<option value="(.+)">').findall(soup.prettify())
 
     lang_others = []
-    for strin in li:
-        lang_others.append(str(strin))
+    for lang in lang_list:
+        if lang.count(' ') != 0:
+            print 'space is included, replace it with "-"'
+            lang = lang.replace(' ','-')
+            lang_others.append(lang)
+        else:
+            lang_others.append(str(lang))
 
-    print lang_others
+    return list(set(lang_others))
 
 # Other Language 중 search 결과 중 가장 낮은 수의 스타 수 구함 (콘솔에 출력)
-# 띄어쓰기가 들어간 언어의 경우 blankList.csv라는 파일에 리스트가 저장됨, 리스트에서 이러한 언어들의 띄어쓰기를 '-'로 대체해 줘야함
-def GetOtherLanguage1000thStar():
+def GetOtherLanguage1000thStar(lang):
     lang_others_dict={}
-    # 428 languages
-    lang_others=[
-        '1C-Enterprise', 'ABAP', 'ABNF', 'Ada', 'Agda',
-        'AGS-Script', 'Alloy', 'Alpine-Abuild', 'AMPL',
-        'Ant-Build-System', 'ANTLR', 'ApacheConf', 'Apex',
-        'API-Blueprint', 'APL', 'Apollo-Guidance-Computer',
-        'AppleScript', 'Arc', 'Arduino', 'AsciiDoc', 'ASN.1',
-        'ASP', 'AspectJ', 'Assembly', 'ATS', 'Augeas', 'AutoHotkey',
-        'AutoIt', 'Awk', 'Batchfile', 'Befunge', 'Bison', 'BitBake',
-        'Blade', 'BlitzBasic', 'BlitzMax', 'Bluespec', 'Boo',
-        'Brainfuck', 'Brightscript', 'Bro', 'C-ObjDump', 'C2hs-Haskell',
-        "Cap'n-Proto", 'CartoCSS', 'Ceylon', 'Chapel', 'Charity', 'ChucK',
-        'Cirru', 'Clarion', 'Clean', 'Click', 'CLIPS', 'Closure-Templates',
-        'CMake', 'COBOL', 'ColdFusion', 'ColdFusion-CFC', 'COLLADA',
-        'Common-Lisp', 'Component-Pascal', 'Cool', 'Coq', 'Cpp-ObjDump',
-        'Creole', 'Crystal', 'CSON', 'Csound', 'Csound-Document', 'Csound-Score',
-        'CSV', 'Cuda', 'CWeb', 'Cycript', 'Cython', 'D', 'D-ObjDump', 'Darcs-Patch',
-        'Dart', 'desktop', 'Diff', 'DIGITAL-Command-Language', 'DM', 'DNS-Zone',
-        'Dockerfile', 'Dogescript', 'DTrace', 'Dylan', 'E', 'Eagle', 'Easybuild',
-        'EBNF', 'eC', 'Ecere-Projects', 'ECL', 'ECLiPSe', 'edn', 'Eiffel', 'EJS',
-        'Elixir', 'Elm', 'Emacs-Lisp', 'EmberScript', 'EQ', 'Erlang', 'F#', 'Factor',
-        'Fancy', 'Fantom', 'Filebench-WML', 'Filterscript', 'fish', 'FLUX', 'Formatted',
-        'Forth', 'Fortran', 'FreeMarker', 'Frege', 'G-code', 'Game-Maker-Language', 'GAS',
-        'GAP', 'GCC-Machine-Description', 'GDB', 'GDScript', 'Genie', 'Genshi', 'Gentoo-Ebuild',
-        'Gentoo-Eclass', 'Gettext-Catalog', 'Gherkin', 'GLSL', 'Glyph', 'GN', 'Gnuplot', 'Golo',
-        'Gosu', 'Grace', 'Gradle', 'Grammatical-Framework', 'Graph-Modeling-Language', 'GraphQL',
-        'Graphviz-(DOT)', 'Groovy', 'Groovy-Server-Pages', 'Hack', 'Haml', 'Handlebars', 'Harbour',
-        'Haxe', 'HCL', 'HLSL', 'HTML+Django', 'HTML+ECR', 'HTML+EEX', 'HTML+ERB', 'HTML+PHP', 'HTTP',
-        'Hy', 'HyPhy', 'IDL', 'Idris', 'IGOR-Pro', 'Inform-7', 'INI', 'Inno-Setup', 'Io', 'Ioke', 'IRC-log',
-        'Isabelle', 'Isabelle-ROOT', 'J', 'Jasmin', 'Java-Server-Pages', 'JFlex', 'Jison',
-        'Jison-Lex', 'Jolie', 'JSON', 'JSON5', 'JSONiq', 'JSONLD', 'JSX', 'Julia', 'Jupyter-Notebook',
-        'KiCad', 'Kit', 'Kotlin', 'KRL', 'LabVIEW', 'Lasso', 'Latte', 'Lean', 'Less', 'Lex',
-        'LFE', 'LilyPond', 'Limbo', 'Linker-Script', 'Linux-Kernel-Module', 'Liquid', 'Literate-Agda',
-        'Literate-CoffeeScript', 'Literate-Haskell', 'LiveScript', 'LLVM', 'Logos', 'Logtalk', 'LOLCODE',
-        'LookML', 'LoomScript', 'LSL', 'M', 'M4', 'M4Sugar', 'Makefile', 'Mako', 'Markdown', 'Marko', 'Mask',
-        'Mathematica', 'Maven-POM', 'Max', 'MAXScript', 'MediaWiki', 'Mercury', 'Meson', 'Metal', 'MiniD', 'Mirah',
-        'Modelica', 'Modula-2', 'Module-Management-System', 'Monkey', 'Moocode', 'MoonScript', 'MQL4', 'MQL5', 'MTML',
-        'MUF', 'mupad', 'Myghty', 'NCL', 'Nemerle', 'nesC', 'NetLinx', 'NetLinx+ERB', 'NetLogo', 'NewLisp', 'Nginx',
-        'Nim', 'Ninja', 'Nit', 'Nix', 'NL', 'NSIS', 'Nu', 'NumPy', 'ObjDump', 'Objective-C++', 'Objective-J',
-        'OCaml', 'Omgrofl', 'ooc', 'Opa', 'Opal', 'OpenCL', 'OpenEdge-ABL', 'OpenRC-runscript', 'OpenSCAD',
-        'OpenType-Feature-File', 'Org', 'Ox', 'Oxygene', 'Oz', 'P4', 'Pan', 'Papyrus', 'Parrot', 'Parrot-Assembly',
-        'Parrot-Internal-Representation', 'Pascal', 'PAWN', 'Pep8', 'Perl-6', 'Pic', 'Pickle',
-        'PicoLisp', 'PigLatin', 'Pike', 'PLpgSQL', 'PLSQL', 'Pod', 'PogoScript', 'Pony', 'PostScript',
-        'POV-Ray-SDL', 'PowerBuilder', 'PowerShell', 'Processing', 'Prolog', 'Propeller-Spin', 'Protocol-Buffer',
-        'Public-Key', 'Pug', 'Puppet', 'Pure-Data', 'PureBasic', 'PureScript', 'Python-console', 'Python-traceback',
-        'QMake', 'QML', 'Racket', 'Ragel', 'RAML', 'Rascal', 'Raw-token-data', 'RDoc', 'REALbasic', 'Reason', 'Rebol',
-        'Red', 'Redcode', 'Regular-Expression', "Ren'Py", 'RenderScript', 'reStructuredText', 'REXX', 'RHTML', 'Ring',
-        'RMarkdown', 'RobotFramework', 'Roff', 'Rouge', 'RPM-Spec', 'RUNOFF', 'Rust', 'Sage', 'SaltStack', 'SAS', 'Sass',
-        'Scaml', 'Scheme', 'Scilab', 'SCSS', 'Self', 'ShaderLab', 'ShellSession', 'Shen', 'Slash', 'Slim', 'Smali',
-        'Smalltalk', 'Smarty', 'SMT', 'SourcePawn', 'SPARQL', 'Spline-Font-Database', 'SQF', 'SQL', 'SQLPL',
-        'Squirrel', 'SRecode-Template', 'Stan', 'Standard-ML', 'Stata', 'STON', 'Stylus', 'Sublime-Text-Config',
-        'SubRip-Text', 'SuperCollider', 'SVG', 'SystemVerilog', 'Tcl', 'Tcsh', 'Tea', 'Terra', 'Text', 'Textile',
-        'Thrift', 'TI-Program', 'TLA', 'TOML', 'Turing', 'Turtle', 'Twig', 'TXL',
-        'Type-Language', 'TypeScript',
-        'Unified-Parallel-C', 'Unity3D-Asset', 'Unix-Assembly', 'Uno', 'UnrealScript', 'UrWeb', 'Vala', 'VCL',
-        'Verilog', 'VHDL', 'Visual-Basic', 'Volt', 'Vue', 'Wavefront-Material', 'Wavefront-Object', 'Web-Ontology-Language',
-        'WebAssembly', 'WebIDL', 'wisp', 'World-of-Warcraft-Addon-Data', 'X10', 'xBase', 'XC', 'XCompose',
-        'XML', 'Xojo', 'XPages', 'XProc', 'XQuery', 'XS', 'XSLT', 'Xtend', 'Yacc', 'YAML', 'YANG', 'Zephir',
-        'Zimpl']
+    # 462 languages
+    lang_others=lang
     for lang in lang_others:
         url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang+'"&sort=stars'
         print url
@@ -159,17 +106,13 @@ def GetOtherLanguage1000thStar():
             except KeyError:
                 print 'Limit reached...'
                 sleep(2)
-            except ValueError as e:
-                print 'Blank error\n'+lang
-                with open('blankList.csv','a') as csvfile:
-                    blankwriter = csv.writer(csvfile)
-                    blankwriter.writerow([lang])
-                break
 
     print lang_others_dict
     return lang_others_dict
 
-GetOtherLanguage1000thStar()
+language_list=OtherLanguageFromWeb()
+print language_list
+GetOtherLanguage1000thStar(language_list)
 
 # 결과값 (단, 사용시 에러가 발생하는 언어들을 걸러줘야함.)
 result={
@@ -231,3 +174,4 @@ result={
     'SQL': 6, 'PureScript': 6, 'Fancy': 6, 'PowerShell': 11, 'Bro': 6, 'wisp': 6, 'NCL': 15, 'Io': 6, 'Racket': 6,
     'Shen': 8, 'SRecode-Template': 10, 'Dogescript': 7, 'nesC': 6, 'Inno-Setup': 6
 }
+
