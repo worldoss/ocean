@@ -16,10 +16,26 @@ from bs4 import BeautifulSoup
 import urllib
 import re
 
+class IncompleteError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
+class NoresultError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    auth = base64.encodestring('id' + ':' + 'pw')
+    id = ''
+    pw = ''
+    auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
 def FindLink(response,which):
@@ -132,21 +148,24 @@ def GetOtherLanguage1000thStar():
                             print lang_others_dict
                             break
                     else:
-                        print 'no results'
-                        break
+                        raise NoresultError('No results')
                 else:
-                    print 'incomplete results try again'
-            except KeyError as e:
-                print 'limit reached...'
+                    raise IncompleteError('Incomplete results, try again')
+            except IncompleteError as e:
                 print e
+            except NoresultError as e:
+                print e
+                break
+            except KeyError:
+                print 'Limit reached...'
                 sleep(2)
             except ValueError as e:
-                print 'blank error\n'+lang
-                print e
+                print 'Blank error\n'+lang
                 with open('blankList.csv','a') as csvfile:
                     blankwriter = csv.writer(csvfile)
                     blankwriter.writerow([lang])
                 break
+
     print lang_others_dict
     return lang_others_dict
 

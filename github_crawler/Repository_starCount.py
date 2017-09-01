@@ -13,7 +13,7 @@ import re
 import datetime
 from time import sleep
 
-class incompleteError(Exception):
+class IncompleteError(Exception):
     def __init__(self, msg):
         self.msg = msg
 
@@ -30,8 +30,8 @@ class NoresultError(Exception):
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    id = 'id'
-    pw = 'pw'
+    id = ''
+    pw = ''
     auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
@@ -133,14 +133,14 @@ def FindLink(response,which):
 
 # 저장할 csv 파일명 수정
 def TopStarWriteCSV(lang,json_parsed):
-    with open('data/(donghyun)countStar.csv', 'a') as csvfile:
+    with open('data/(test)countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
         for data in json_parsed:
             writer.writerow([lang[0]] + [data['stargazers_count']] + [1]+[datetime.datetime.now()])
 
 # 저장할 csv 파일명 수정 (TopStarWriteCSV csv 파일명과 일치!)
 def UnderStarWriteCSV(lang,count,json_parsed):
-    with open('data/(donghyun)countStar.csv', 'a') as csvfile:
+    with open('data/(test)countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([lang[0]] + [str(count)] + [json_parsed] + [datetime.datetime.now()])
 
@@ -157,11 +157,11 @@ def NextPage(url,next,last):
                 next = FindLink(response,'next')
                 count_last += 1
             else:
-                raise incompleteError('Not incomplete results, try again')
-        except incompleteError as e:
+                raise IncompleteError('Not incomplete results, try again')
+        except IncompleteError as e:
             print e
         except KeyError as e:
-            print e
+            print 'Limit reached...'
             sleep(2)
 
 lang_thousand = {}
@@ -184,15 +184,16 @@ for lang in lang_items:
                     last = FindLink(response,'last')
                     NextPage(url,next,last)
                     break
-                except KeyError as e:
-                    print 'no next'
+                except KeyError:
+                    print 'No next page'
                     break
             else:
-                raise incompleteError('Not incomplete results, try again')
-        except KeyError as e:
+                raise IncompleteError('Incomplete results, try again')
+        except IncompleteError as e:
             print e
+        except KeyError:
+            print 'Limit reached...'
             sleep(2)
-
 
 # 1000번째 저장소 이후의 스타수 별 저장소 수
 for lang in lang_items:
@@ -211,11 +212,12 @@ for lang in lang_items:
                 else:
                     raise NoresultError('No results')
             else:
-                raise incompleteError('Incomplete results, try again')
-        except incompleteError as e:
+                raise IncompleteError('Incomplete results, try again')
+        except IncompleteError as e:
             print e
         except NoresultError as e:
             count-=1
             print e
         except KeyError:
+            print 'Limit reached...'
             sleep(1)

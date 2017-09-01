@@ -13,7 +13,7 @@ import re
 import datetime
 from time import sleep
 
-class incompleteError(Exception):
+class IncompleteError(Exception):
     def __init__(self, msg):
         self.msg = msg
 
@@ -150,7 +150,9 @@ field_list=[
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    auth = base64.encodestring('id' + ':' + 'pw')
+    id = 'rlrlaa123'
+    pw = 'ehehdd009'
+    auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
 # 저장할 csv 파일명 수정
@@ -218,11 +220,11 @@ def NextPage(url,next,last):
                 next = FindLink(response,'next')
                 count_last += 1
             else:
-                raise incompleteError('Not incomplete results, try again')
-        except incompleteError as e:
+                raise IncompleteError('Incomplete results, try again')
+        except IncompleteError as e:
             print e
-        except KeyError as e:
-            print e
+        except KeyError:
+            print 'Limit reached...'
             sleep(2)
 
 lang_thousand = {}
@@ -250,12 +252,14 @@ for lang in lang_key:
                     NextPage(url,next,last)
                     break
                 except KeyError as e:
-                    print 'no next page'
+                    print 'No next page'
                     break
             else:
-                raise incompleteError('Not incomplete results, try again')
-        except KeyError as e:
+                raise IncompleteError('Incomplete results, try again')
+        except IncompleteError as e:
             print e
+        except KeyError as e:
+            print 'Limit reached...'
             sleep(2)
 
 # 1000번째 스타 수 이후의 51번째 까지의 저장소
@@ -277,11 +281,14 @@ for lang in lang_value:
                     next = FindLink(response,'next')
                     last = FindLink(response,'last')
                     NextPage(url,next,last)
+                    count -= 1
                 except KeyError as e:
-                    print 'no next page'
+                    print 'No next page'
+                    count -= 1
             else:
-                print 'incomplete result'
-            count -= 1
-        except KeyError as e:
+                raise IncompleteError('Incomplete results, try again')
+        except IncompleteError as e:
             print e
+        except KeyError as e:
+            print 'Limit reached...'
             sleep(2)
