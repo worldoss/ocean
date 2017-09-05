@@ -148,7 +148,7 @@ def TopStarWriteCSV(lang,json_parsed):
     with open('countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
         for data in json_parsed:
-            writer.writerow([lang[0]] + [data['stargazers_count']] + [1]+[datetime.datetime.now()])
+            writer.writerow([lang] + [data['stargazers_count']] + [1]+[datetime.datetime.now()])
 
 # 저장할 csv 파일명 수정 (TopStarWriteCSV csv 파일명과 일치!)
 def UnderStarWriteCSV(lang,count,json_parsed):
@@ -179,10 +179,8 @@ def NextPage(url,next,last):
 lang_thousand = {}
 lang_thousand.update(lang_popular)
 lang_thousand.update(lang_others)
-print lang_thousand
-lang_items=lang_thousand.items()
-print lang_items
-# Search 결과로 나오는 가장 높은 순위의 저장소들
+
+# Search 결과로 나오는 가장 높 순위의 저장소들
 for lang,star in lang_thousand.iteritems():
     while True:
         url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang+'"&per_page=100&sort=stars'
@@ -218,13 +216,10 @@ for lang,star in lang_thousand.iteritems():
             print 'Limit reached...'
             sleep(2)
 
-print error_language
-print lang_thousand
 # 에러 발생 언어 제외
 for error in error_language:
     if error in lang_thousand:
         lang_thousand.pop(error)
-print lang_thousand
 
 # 1000번째 저장소 이후의 스타수 별 저장소 수
 for lang,star in lang_thousand.iteritems():

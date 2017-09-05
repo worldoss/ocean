@@ -4,7 +4,6 @@
 # Other Language의 경우, 너무 많기 때문에 웹에서 리스트를 크롤링 해오고, 그 리스트를
 # 사용해서, 결과 중 가장 낮은 수의 스타 수를 구함
 
-# 리스트를 구한 후 띄어쓰기를 없애줘야하고, 각종 에러가 발생하는 언어들을 걸러줘야 하기 때문에
 # 결과값은 콘솔에만 print 됨
 
 # 소요시간: 약 30분
@@ -35,8 +34,8 @@ class NoresultError(Exception):
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    id = ''
-    pw = ''
+    id = 'yoonheejong'
+    pw = 'whdwhdwhd1'
     auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
@@ -113,10 +112,9 @@ def GetOtherLanguage1000thStar(lang):
     return lang_others_dict
 
 language_list=OtherLanguageFromWeb()
-print language_list
 GetOtherLanguage1000thStar(language_list)
 
-# 결과값 (단, 사용시 에러가 발생하는 언어들을 걸러줘야함.)
+# 결과값 (C#과 C++의 경우, 정확한 값이 search 되지 않아서, CSharp, Cpp로 search 키워드를 사용해야 한다)
 result={
     'Mercury': 6, 'Mako': 6, 'TypeScript': 63, 'PureBasic': 6,
     'Objective-C++': 6553, 'DTrace': 6, 'Self': 9, 'Lean': 6,

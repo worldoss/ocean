@@ -2,7 +2,7 @@
 
 # 앞서 github_starCount를 통해 선정된 스타 수를 기준으로 데이터 수집
 
-# 먼저, 먼저, search로 나오는 가장 스타가 높은 저장소들을 모으고, 그 이후의 저장소들을 스타 수 50까지 구함
+# 먼저, search로 나오는 가장 스타가 높은 저장소들을 모으고, 그 이후의 저장소들을 스타 수 50까지 구함
 # Github 로그인 ID PW를 입력하고, 저장소들을 저장할 CSV명을 입력해야함
 
 # 소요시간: 9~10시간
@@ -167,13 +167,13 @@ def Request(url):
 
 # 저장할 csv 파일명 수정
 def CreateCSV():
-    with open('data/(test)Repository_data.csv', 'a') as csvfile:
+    with open('Repository_data.csv', 'a') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=field_list)
         writer.writeheader()
 
 # 저장할 csv 파일명 수정 (CreateCSV csv 파일명과 일치!) + error log 저장할 csv 파일명 따로 수정
 def WriteCSV(json_parsed,field_name):
-    with open('data/(test)Repository_data.csv','a') as csvfile:
+    with open('Repository_data.csv','a') as csvfile:
         fieldnames = []
         fieldnames_dict = {}
         for field in field_name:
@@ -199,13 +199,13 @@ def WriteCSV(json_parsed,field_name):
                             writer.writerow(fieldnames_dict)
                             fieldnames_dict = {}
                         except UnicodeEncodeError as e3:
-                            with open('data/error_language.csv', 'a') as csvfile:
+                            with open('error_language.csv', 'a') as csvfile:
                                 errorwriter = csv.writer(csvfile)
                                 errorwriter.writerow([fieldnames_dict['full_name'],e3])
                                 writer.writerow({})
                                 fieldnames_dict = {}
                         except AttributeError as e4:
-                            with open('data/error_language.csv', 'a') as csvfile:
+                            with open('error_language.csv', 'a') as csvfile:
                                 errorwriter = csv.writer(csvfile)
                                 errorwriter.writerow([fieldnames_dict['full_name'],e4])
                                 writer.writerow({})
@@ -244,7 +244,7 @@ lang_thousand.update(lang_others)
 # CSV파일 초기화
 CreateCSV()
 
-# Language 별 스타 수 1000번째 까지의 저장소
+# Language 별 스타 수 1000번째 까지의 저장소 (error log 저장할 csv 파일명 수정)
 lang_key = lang_thousand.keys()
 for lang in lang_key:
     while True:
@@ -261,7 +261,7 @@ for lang in lang_key:
                         try:
                             next = FindLink(response,'next')
                             last = FindLink(response,'last')
-                            # NextPage(url,next,last)
+                            NextPage(url,next,last)
                             break
                         except KeyError as e:
                             print 'No next page'
