@@ -32,7 +32,7 @@ repo_nodes = list(set(b_node))
 nodes = user_nodes + repo_nodes
 edges = [edge_list[0]]
 
-G = nx.Graph()
+G = nx.DiGraph()
 G.add_nodes_from(nodes)
 G.add_edges_from(edges)
 
