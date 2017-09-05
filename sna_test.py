@@ -37,5 +37,5 @@ G.add_nodes_from(nodes)
 G.add_edges_from(edges)
 
 # edge list Visualization
-nx.draw(G)  
+nx.draw_networkx(G)  
 plt.show()
