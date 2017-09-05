@@ -173,43 +173,43 @@ def CreateCSV():
 
 # 저장할 csv 파일명 수정 (CreateCSV csv 파일명과 일치!) + error log 저장할 csv 파일명 따로 수정
 def WriteCSV(json_parsed,field_name):
-    with open('Repository_data.csv','a') as csvfile:
-        fieldnames = []
-        fieldnames_dict = {}
+    fieldnames = []
+    fieldnames_dict = {}
+    for field in field_name:
+        fieldnames.append(field)
+    fieldnames.append('saved_DateTime')
+    for data in json_parsed:
         for field in field_name:
-            fieldnames.append(field)
-        fieldnames.append('saved_DateTime')
-        for data in json_parsed:
-            for field in field_name:
-                fieldnames_dict[field]=data[field]
-            # Save Time log
-            fieldnames_dict['saved_DateTime'] = str(datetime.datetime.now())
+            fieldnames_dict[field]=data[field]
+        # Save Time log
+        fieldnames_dict['saved_DateTime'] = str(datetime.datetime.now())
+        with open('Repository_data.csv', 'a') as csvfile:
             writer = csv.DictWriter(csvfile,fieldnames=fieldnames)
             try:
                 writer.writerow(fieldnames_dict)
                 fieldnames_dict = {}
             except UnicodeEncodeError as e1:
+                try:
+                    fieldnames_dict['description']=fieldnames_dict['description'].encode('utf-8')
+                    writer.writerow(fieldnames_dict)
+                    fieldnames_dict = {}
+                except UnicodeEncodeError:
                     try:
-                        fieldnames_dict['description']=fieldnames_dict['description'].encode('utf-8')
+                        fieldnames_dict['homepage']=fieldnames_dict['homepage'].encode('utf-8')
                         writer.writerow(fieldnames_dict)
                         fieldnames_dict = {}
-                    except UnicodeEncodeError:
-                        try:
-                            fieldnames_dict['homepage']=fieldnames_dict['homepage'].encode('utf-8')
-                            writer.writerow(fieldnames_dict)
+                    except UnicodeEncodeError as e3:
+                        with open('error_language.csv', 'a') as csvfile:
+                            errorwriter = csv.writer(csvfile)
+                            errorwriter.writerow([fieldnames_dict['full_name'],e3])
+                            writer.writerow({})
                             fieldnames_dict = {}
-                        except UnicodeEncodeError as e3:
-                            with open('error_language.csv', 'a') as csvfile:
-                                errorwriter = csv.writer(csvfile)
-                                errorwriter.writerow([fieldnames_dict['full_name'],e3])
-                                writer.writerow({})
-                                fieldnames_dict = {}
-                        except AttributeError as e4:
-                            with open('error_language.csv', 'a') as csvfile:
-                                errorwriter = csv.writer(csvfile)
-                                errorwriter.writerow([fieldnames_dict['full_name'],e4])
-                                writer.writerow({})
-                                fieldnames_dict = {}
+                    except AttributeError as e4:
+                        with open('error_language.csv', 'a') as csvfile:
+                            errorwriter = csv.writer(csvfile)
+                            errorwriter.writerow([fieldnames_dict['full_name'],e4])
+                            writer.writerow({})
+                            fieldnames_dict = {}
 
 def FindLink(response,which):
     if which == 'next':
@@ -299,7 +299,8 @@ for lang in lang_value:
     print lang
     # 1001번째 star 수 부터 카운트
     count=lang[1]-1
-    while count>50:
+    # 50번째 저장소까지 카운트
+    while count>49:
         url = 'https://api.github.com/search/repositories?q=stars:'+str(count)+'+language:"'+lang[0]+'"&per_page=100&sort=stars'
         print url
         try:
