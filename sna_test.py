@@ -39,3 +39,19 @@ G.add_edges_from(edges)
 # edge list Visualization
 nx.draw_networkx(G)  
 plt.show()
+
+# 주요 중심성 지표 계산 함수 추가
+def centralissimo(E):
+  centralities = []
+  centralities.append(nx.in_degree_centrality(E))
+  centralities.append(nx.out_degree_centrality(E))
+  centralities.append(nx.closeness_centrality(E))
+  centralities.append(nx.betweenness_centrality(E))
+  centralities.append(nx.eigenvector_centrality(E))
+  centralities.append(nx.pagerank(E))
+
+  for node in E.nodes_iter():
+    measures = ("\t").join(map(lambda f: str(f[node]), centralities))
+    print("%s: %s" % (node, measures))
+
+centralissimo(G)
