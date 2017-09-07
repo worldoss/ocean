@@ -5,6 +5,8 @@
 # 먼저, search로 나오는 가장 스타가 높은 저장소들을 구하고, 그 이후의 스타 별 저장소 갯수를 카운트함
 # Github 로그인 ID PW 입력해주어야 하고 저장할 CSV 파일명들의 경로를 수정해주어야 한다
 
+# 소요시간: 약 9~10시간
+
 import httplib2
 import json
 import base64
@@ -13,7 +15,7 @@ import re
 import datetime
 from time import sleep
 
-class incompleteError(Exception):
+class IncompleteError(Exception):
     def __init__(self, msg):
         self.msg = msg
 
@@ -27,11 +29,18 @@ class NoresultError(Exception):
     def __str__(self):
         return self.msg
 
+class LanguageError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    id = 'id'
-    pw = 'pw'
+    id = ''
+    pw = ''
     auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
@@ -48,7 +57,7 @@ lang_popular={
     'Haskell':35,
     'HTML':322,
     'Java':1270,
-    'Javascript':2908,
+    'JavaScript':2908,
     'Lua':36,
     'Matlab':9,
     'Objective-C':716,
@@ -125,6 +134,9 @@ lang_others={
     'Shen': 8, 'SRecode-Template': 10, 'Dogescript': 7, 'nesC': 6, 'Inno-Setup': 6
 }
 
+# search 에러가 발생하는 언어들을 걸러낼 리스트
+error_language=[]
+
 def FindLink(response,which):
     if which == 'next':
         return re.compile('([0-9]+)>; rel="next"').findall(response['link'])
@@ -133,14 +145,14 @@ def FindLink(response,which):
 
 # 저장할 csv 파일명 수정
 def TopStarWriteCSV(lang,json_parsed):
-    with open('data/(donghyun)countStar.csv', 'a') as csvfile:
+    with open('countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
         for data in json_parsed:
-            writer.writerow([lang[0]] + [data['stargazers_count']] + [1]+[datetime.datetime.now()])
+            writer.writerow([lang] + [data['stargazers_count']] + [1]+[datetime.datetime.now()])
 
 # 저장할 csv 파일명 수정 (TopStarWriteCSV csv 파일명과 일치!)
 def UnderStarWriteCSV(lang,count,json_parsed):
-    with open('data/(donghyun)countStar.csv', 'a') as csvfile:
+    with open('countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([lang[0]] + [str(count)] + [json_parsed] + [datetime.datetime.now()])
 
@@ -157,48 +169,63 @@ def NextPage(url,next,last):
                 next = FindLink(response,'next')
                 count_last += 1
             else:
-                raise incompleteError('Not incomplete results, try again')
-        except incompleteError as e:
+                raise IncompleteError('Not incomplete results, try again')
+        except IncompleteError as e:
             print e
         except KeyError as e:
-            print e
+            print 'Limit reached...'
             sleep(2)
 
 lang_thousand = {}
 lang_thousand.update(lang_popular)
 lang_thousand.update(lang_others)
-lang_items=lang_thousand.items()
 
-# Search 결과로 나오는 가장 높은 순위의 저장소들
-for lang in lang_items:
+# Search 결과로 나오는 가장 높 순위의 저장소들
+for lang,star in lang_thousand.iteritems():
     while True:
-        url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang[0]+'"&per_page=100&sort=stars'
+        url = 'https://api.github.com/search/repositories?q=stars:>5+language:"'+lang+'"&per_page=100&sort=stars'
         print url
         try:
             response, content = Request(url)
             if json.loads(content)['incomplete_results']==False:
                 json_parsed = json.loads(content)['items']
-                TopStarWriteCSV(lang,json_parsed)
-                try:
-                    next = FindLink(response,'next')
-                    last = FindLink(response,'last')
-                    NextPage(url,next,last)
-                    break
-                except KeyError as e:
-                    print 'no next'
-                    break
+                if json_parsed[0]['language'] == lang or json_parsed[0]['language'] == 'C++' or json_parsed[0]['language'] == 'C#':  # C++과 C#은 search 단어가 다르기 때문에 제외
+                    TopStarWriteCSV(lang,json_parsed)
+                    try:
+                        next = FindLink(response,'next')
+                        last = FindLink(response,'last')
+                        NextPage(url,next,last)
+                        break
+                    except KeyError:
+                        print 'No next page'
+                        break
+                else:
+                    raise LanguageError('Language miss-match')
             else:
-                raise incompleteError('Not incomplete results, try again')
-        except KeyError as e:
+                raise IncompleteError('Incomplete results, try again')
+        except IncompleteError as e:
             print e
+        except LanguageError as e:
+            print e
+            with open('error_language.csv', 'a') as csvfile:
+                errorwriter = csv.writer(csvfile)
+                errorwriter.writerow([lang,e])
+                error_language.append(lang)
+            break
+        except KeyError:
+            print 'Limit reached...'
             sleep(2)
 
+# 에러 발생 언어 제외
+for error in error_language:
+    if error in lang_thousand:
+        lang_thousand.pop(error)
 
 # 1000번째 저장소 이후의 스타수 별 저장소 수
-for lang in lang_items:
-    count=lang[1]-1
+for lang,star in lang_thousand.iteritems():
+    count=star-1
     while count>5:
-        url = 'https://api.github.com/search/repositories?q=stars:'+str(count)+'+language:"'+lang[0]+'"&per_page=100'
+        url = 'https://api.github.com/search/repositories?q=stars:'+str(count)+'+language:"'+lang+'"&per_page=100'
         print url
         try:
             response, content = Request(url)
@@ -211,11 +238,12 @@ for lang in lang_items:
                 else:
                     raise NoresultError('No results')
             else:
-                raise incompleteError('Incomplete results, try again')
-        except incompleteError as e:
+                raise IncompleteError('Incomplete results, try again')
+        except IncompleteError as e:
             print e
         except NoresultError as e:
             count-=1
             print e
         except KeyError:
+            print 'Limit reached...'
             sleep(1)
