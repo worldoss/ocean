@@ -4,6 +4,10 @@
 ```
 Create CSVWriter
 ```
+* Before PullRequest commit message should be version
+```
+version 1.1
+```
 
 ### Verbs
 * Create
