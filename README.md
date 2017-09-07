@@ -1,13 +1,20 @@
 ## Commit Rules
 
-* It should be always Verb + Function_name
+* Case: Description
 ```
-Create CSVWriter
+doc: Update README.md
 ```
+
 * Before PullRequest commit message should be version
 ```
 version 1.1
 ```
+
+### Case
+* doc
+* test
+* filename
+  * RepoLiceCollector: Update CSVWriter
 
 ### Verbs
 * Create
