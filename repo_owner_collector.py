@@ -7,8 +7,8 @@ import datetime
 
 
 file_path = 'file_path'
-owner_file_name = 'owner_file_name.csv'
-repo_file_name = 'repo_file_name.csv'
+owner_file_name = 'owner_file_name' + '.csv'
+repo_file_name = 'repo_file_name' + '.csv'
 
 repo_data = pd.read_csv(file_path + repo_file_name)
 repo_id_list = repo_data.values[:,0]
