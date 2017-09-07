@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+import numpy as np
 import csv
 import time
 import datetime
-import numpy as np
 
 
 file_path = 'file_path'
