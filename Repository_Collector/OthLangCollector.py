@@ -34,8 +34,8 @@ class NoresultError(Exception):
 # Github 로그인 ID PW 입력
 def Request(url):
     http = httplib2.Http()
-    id = 'yoonheejong'
-    pw = 'whdwhdwhd1'
+    id = ''
+    pw = ''
     auth = base64.encodestring(id + ':' + pw)
     return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 

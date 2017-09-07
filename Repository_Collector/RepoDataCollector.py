@@ -36,6 +36,14 @@ class LanguageError(Exception):
     def __str__(self):
         return self.msg
 
+# Github 로그인 ID PW 입력
+def Request(url):
+    http = httplib2.Http()
+    id = ''
+    pw = ''
+    auth = base64.encodestring(id + ':' + pw)
+    return http.request(url, 'GET', headers={'Authorization': 'Basic ' + auth})
+
 # Popular Language 1000번째 스타 수
 lang_popular={
     'ActionScript':10,
@@ -156,14 +164,6 @@ field_list=[
     'forks','open_issues','watchers',
     'default_branch','permissions','score'
 ]
-
-# Github 로그인 ID PW 입력
-def Request(url):
-    http = httplib2.Http()
-    id = ''
-    pw = ''
-    auth = base64.encodestring(id + ':' + pw)
-    return http.request(url,'GET',headers={ 'Authorization' : 'Basic ' + auth})
 
 # 저장할 csv 파일명 수정
 def CreateCSV():
