@@ -162,7 +162,7 @@ field_list=[
     'has_downloads','has_wiki','has_pages',
     'forks_count','mirror_url','open_issues_count',
     'forks','open_issues','watchers',
-    'default_branch','permissions','score'
+    'default_branch','permissions','score', 'Saved_DateTime'
 ]
 
 # 저장할 csv 파일명 수정
@@ -177,12 +177,11 @@ def WriteCSV(json_parsed,field_name):
     fieldnames_dict = {}
     for field in field_name:
         fieldnames.append(field)
-    fieldnames.append('saved_DateTime')
     for data in json_parsed:
         for field in field_name:
             fieldnames_dict[field]=data[field]
         # Save Time log
-        fieldnames_dict['saved_DateTime'] = str(datetime.datetime.now())
+        fieldnames_dict['Saved_DateTime'] = str(datetime.datetime.now())
         with open('Repository_data.csv', 'a') as csvfile:
             writer = csv.DictWriter(csvfile,fieldnames=fieldnames)
             try:
@@ -292,7 +291,7 @@ for lang in lang_key:
 for error in error_language:
     lang_thousand.pop(error)
 
-# 1000번째 스타 수 이후의 51번째 까지의 저장소
+# 1000번째 스타 수 이후의 50번째 까지의 저장소
 lang_value = lang_thousand.items()
 print lang_value
 for lang in lang_value:
