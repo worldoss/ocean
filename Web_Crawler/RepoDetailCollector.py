@@ -59,11 +59,17 @@ class WebCrawler():
     # Save Results
     def CSVWrtier(self):
         with open('Repository_data.csv', 'a') as csvfile:
-            data_list = []
             writer = csv.DictWriter(csvfile, fieldnames=['Commit','Branch','Release','Contributor','License','Topic','Saved_DateTime'])
             writer.writeheader()
             self.data['Saved_DateTime'] = str(datetime.datetime.now())
             writer.writerow(self.data)
+
+    def RepoParser(self):
+        with open('data/finalRepoDataCol2.csv','r') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                print row['full_name']
+                print row['owner']['login']
 
 repositories=WebCrawler()
 repositories.Request('tensorflow','tensorflow')
