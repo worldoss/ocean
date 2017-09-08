@@ -18,44 +18,75 @@ class WebCrawler():
         fp = urllib.urlopen(url)
         source = fp.read()
         fp.close()
-        time.sleep(0.2)
         self.request = BeautifulSoup(source, 'html.parser')
 
     # Scrap Summary
     def SummaryScrap(self):
-        while True:
-            try:
-                summary= self.request.findAll('ul', attrs={'class':'numbers-summary'})
-                sumelement = summary[0].find_all('a')
-                for ele in sumelement:
-                    parsed = ele.text.replace("\n","").strip().replace(" ","")
-                    print parsed
-                    if ',' in parsed:
-                        parsed = parsed.replace(',','')
-                    if 'commits' in parsed:
-                        value = parsed.replace('commits','')
-                        print 'Commits: ' + value
-                        self.data['Commit'] = int(value)
-                    elif 'branches' in parsed:
-                        value = parsed.replace('branches','')
-                        print 'Branches: ' + value
-                        self.data['Branch'] = int(value)
-                    elif 'releases' in parsed:
-                        value = parsed.replace('releases','')
-                        print 'Releases: ' + value
-                        self.data['Release'] = int(value)
-                    elif 'contributors' in parsed:
-                        value = parsed.replace('contributors','')
-                        print 'Contributors: ' + value
-                        self.data['Contributor'] = int(value)
-                    elif 'license' in parsed:
-                        self.data['License']=parsed
-                        print 'License: ' + parsed
-                    else:
-                        print parsed
-                break
-            except:
-                self.Request(owner,repo)
+
+        summary= self.request.findAll('ul', attrs={'class':'numbers-summary'})
+        sumelement = summary[0].find_all('a')
+
+        for ele in sumelement:
+
+            parsed = ele.text.replace("\n","").strip().replace(" ","")
+
+            if ',' in parsed:
+                parsed = parsed.replace(',','')
+
+            if 'commits' in parsed:
+                value = parsed.replace('commits','')
+
+                print 'Commits: ' + value
+                self.data['Commit'] = int(value)
+
+            elif 'commit' in parsed:
+                value = parsed.replace('commit','')
+
+                print 'Commits: ' + value
+                self.data['Commit'] = int(value)
+
+            elif 'branches' in parsed:
+                value = parsed.replace('branches','')
+
+                print 'Branches: ' + value
+                self.data['Branch'] = int(value)
+
+            elif 'branch' in parsed:
+                value = parsed.replace('branch','')
+
+                print 'Branches: ' + value
+                self.data['Branch'] = int(value)
+
+            elif 'releases' in parsed:
+                value = parsed.replace('releases','')
+
+                print 'Releases: ' + value
+                self.data['Release'] = int(value)
+
+            elif 'release' in parsed:
+                value = parsed.replace('release','')
+
+                print 'Releases: ' + value
+                self.data['Release'] = int(value)
+
+            elif 'contributors' in parsed:
+                value = parsed.replace('contributors','')
+
+                print 'Contributors: ' + value
+                self.data['Contributor'] = int(value)
+
+            elif 'contributor' in parsed:
+                value = parsed.replace('contributor','')
+
+                print'Contributors: ' + value
+                self.data['Contributor'] = int(value)
+
+            elif 'license' in parsed:
+                self.data['License']=parsed
+                print 'License: ' + parsed
+            else:
+                print parsed
+
     # Scrap Topics
     def TopicScrap(self):
         self.data['Topic'] = []
@@ -84,6 +115,8 @@ repositories = WebCrawler()
 with open('data/finalRepoDataCol2.csv','r') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
+
+        # Crawling Start
         owner,repo = row['full_name'].split('/')
         repositories.Request(owner,repo)
         repositories.SummaryScrap()
