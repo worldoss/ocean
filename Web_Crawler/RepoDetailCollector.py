@@ -68,11 +68,14 @@ class WebCrawler():
         with open('data/finalRepoDataCol2.csv','r') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                print row['full_name']
-                print row['owner']['login']
+                full_name = row['full_name'].split('/')
+                print full_name
+                return full_name
 
 repositories=WebCrawler()
-repositories.Request('tensorflow','tensorflow')
+user,repo=repositories.RepoParser()
+print user, repo
+repositories.Request('facebook','react')
 repositories.SummaryScrap()
 repositories.TopicScrap()
 print repositories.data
