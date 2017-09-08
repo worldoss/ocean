@@ -10,6 +10,16 @@ import time
 class WebCrawler():
     def __init__(self):
         self.data = {}
+        self.field_list = [
+            'full_name',
+            'Commit',
+            'Branch',
+            'Release',
+            'Contributor',
+            'License',
+            'Topic',
+            'Saved_DateTime'
+        ]
 
     # Request HTML
     def Request(self,owner,repository):
@@ -25,9 +35,7 @@ class WebCrawler():
 
         summary= self.request.findAll('ul', attrs={'class':'numbers-summary'})
         sumelement = summary[0].find_all('a')
-
         for ele in sumelement:
-
             parsed = ele.text.replace("\n","").strip().replace(" ","")
 
             if ',' in parsed:
@@ -70,23 +78,27 @@ class WebCrawler():
                 self.data['Release'] = int(value)
 
             elif 'contributors' in parsed:
-                value = parsed.replace('contributors','')
+                try:
+                    value = parsed.replace('contributors', '')
 
-                print 'Contributors: ' + value
-                self.data['Contributor'] = int(value)
+                    print 'Contributors: ' + value
+                    self.data['Contributor'] = int(value)
+
+                except ValueError as e:
+                    print 'Fetching Error'
 
             elif 'contributor' in parsed:
-                value = parsed.replace('contributor','')
+                try:
+                    value = parsed.replace('contributor', '')
 
-                print'Contributors: ' + value
-                self.data['Contributor'] = int(value)
+                    print'Contributors: ' + value
+                    self.data['Contributor'] = int(value)
 
-            elif 'license' in parsed:
-                self.data['License']=parsed
-                print 'License: ' + parsed
+                except ValueError as e:
+                    print 'Fetching Error'
             else:
+                self.data['License'] = parsed
                 print parsed
-
     # Scrap Topics
     def TopicScrap(self):
         self.data['Topic'] = []
@@ -101,11 +113,16 @@ class WebCrawler():
         else:
             print 'no topic'
 
-    # Save Results
-    def CSVWrtier(self):
+    def CSVCreater(self):
         with open('Repository_data.csv', 'a') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=['Commit','Branch','Release','Contributor','License','Topic','Saved_DateTime'])
+            writer = csv.DictWriter(csvfile,fieldnames=self.field_list)
             writer.writeheader()
+    # Save Results
+
+    def CSVWrtier(self):
+        print self.data
+        with open('Repository_data.csv', 'a') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.field_list)
             self.data['Saved_DateTime'] = str(datetime.datetime.now())
             writer.writerow(self.data)
 
@@ -114,10 +131,12 @@ repositories = WebCrawler()
 # Parse Repository owner and name
 with open('data/finalRepoDataCol2.csv','r') as csvfile:
     reader = csv.DictReader(csvfile)
+    repositories.CSVCreater()
     for row in reader:
 
         # Crawling Start
         owner,repo = row['full_name'].split('/')
+        repositories.data['full_name'] = row['full_name']
         repositories.Request(owner,repo)
         repositories.SummaryScrap()
         repositories.TopicScrap()
