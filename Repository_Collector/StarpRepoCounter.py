@@ -247,3 +247,7 @@ for lang,star in lang_thousand.iteritems():
         except KeyError:
             print 'Limit reached...'
             sleep(1)
+        except ValueError as e:
+            with open('error_language.csv', 'a') as csvfile:
+                errorwriter = csv.writer(csvfile)
+                errorwriter.writerow([lang,count,e])
