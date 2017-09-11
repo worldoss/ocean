@@ -6,4 +6,4 @@
 ### 예시 데이터
 [StarCount](https://drive.google.com/open?id=0BwuNLm9Ni9ZlamZyRlludzFWMVE)
 
-[RepositoryData](https://drive.google.com/open?id=0BwuNLm9Ni9ZlbS02ODNCYnNyckE)
+[RepositoryData](https://drive.google.com/open?id=0BwuNLm9Ni9ZlMmpLa0JPYXM4b2s)
