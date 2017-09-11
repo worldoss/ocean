@@ -21,3 +21,4 @@ version 1.1
 * Create
 * Update
 * Delete
+* Fix

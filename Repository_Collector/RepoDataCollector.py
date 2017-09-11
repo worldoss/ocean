@@ -1,5 +1,7 @@
 #-*- coding: utf-8 -*-
 
+# version 1.1
+
 # 앞서 github_starCount를 통해 선정된 스타 수를 기준으로 데이터 수집
 
 # 먼저, search로 나오는 가장 스타가 높은 저장소들을 모으고, 그 이후의 저장소들을 스타 수 50까지 구함
@@ -168,7 +170,7 @@ field_list=[
 # 저장할 csv 파일명 수정
 def CreateCSV():
     with open('Repository_data.csv', 'a') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=field_list)
+        writer = csv.DictWriter(csvfile, fieldnames=field_list+['Saved_DateTime'])
         writer.writeheader()
 
 # 저장할 csv 파일명 수정 (CreateCSV csv 파일명과 일치!) + error log 저장할 csv 파일명 따로 수정
@@ -177,14 +179,17 @@ def WriteCSV(json_parsed,field_name):
     fieldnames_dict = {}
     for field in field_name:
         fieldnames.append(field)
-    fieldnames.append('saved_DateTime')
     for data in json_parsed:
         for field in field_name:
             fieldnames_dict[field]=data[field]
         # Save Time log
-        fieldnames_dict['saved_DateTime'] = str(datetime.datetime.now())
+        fieldnames_dict['Saved_DateTime'] = str(datetime.datetime.now())
+
+        if ';' in fieldnames_dict['description']:
+            fieldnames_dict['description'] = fieldnames_dict['description'].replace(';', '')
+
         with open('Repository_data.csv', 'a') as csvfile:
-            writer = csv.DictWriter(csvfile,fieldnames=fieldnames)
+            writer = csv.DictWriter(csvfile,fieldnames=fieldnames+['Saved_DateTime'])
             try:
                 writer.writerow(fieldnames_dict)
                 fieldnames_dict = {}
@@ -292,7 +297,7 @@ for lang in lang_key:
 for error in error_language:
     lang_thousand.pop(error)
 
-# 1000번째 스타 수 이후의 51번째 까지의 저장소
+# 1000번째 스타 수 이후의 50번째 까지의 저장소
 lang_value = lang_thousand.items()
 print lang_value
 for lang in lang_value:
@@ -322,5 +327,10 @@ for lang in lang_value:
         except IncompleteError as e:
             print e
         except KeyError as e:
+            print e
             print 'Limit reached...'
             sleep(2)
+        except ValueError as e:
+            with open('error_language.csv', 'a') as csvfile:
+                errorwriter = csv.writer(csvfile)
+                errorwriter.writerow([lang[0],count,e])

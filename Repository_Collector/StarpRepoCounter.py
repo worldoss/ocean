@@ -1,5 +1,7 @@
 #-*- coding: utf-8 -*-
 
+# version 1.1
+
 # 스타 순위별로 저장소들을 정렬하고, 원하는 저장소의 양만큼이 몇 star 이상인지 알아내는 작업
 
 # 먼저, search로 나오는 가장 스타가 높은 저장소들을 구하고, 그 이후의 스타 별 저장소 갯수를 카운트함
@@ -154,7 +156,7 @@ def TopStarWriteCSV(lang,json_parsed):
 def UnderStarWriteCSV(lang,count,json_parsed):
     with open('countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow([lang[0]] + [str(count)] + [json_parsed] + [datetime.datetime.now()])
+        writer.writerow([lang] + [str(count)] + [json_parsed] + [datetime.datetime.now()])
 
 def NextPage(url,next,last):
     count_last = 2
@@ -247,3 +249,7 @@ for lang,star in lang_thousand.iteritems():
         except KeyError:
             print 'Limit reached...'
             sleep(1)
+        except ValueError as e:
+            with open('error_language.csv', 'a') as csvfile:
+                errorwriter = csv.writer(csvfile)
+                errorwriter.writerow([lang,count,e])
