@@ -154,7 +154,7 @@ def TopStarWriteCSV(lang,json_parsed):
 def UnderStarWriteCSV(lang,count,json_parsed):
     with open('countStar.csv', 'a') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow([lang[0]] + [str(count)] + [json_parsed] + [datetime.datetime.now()])
+        writer.writerow([lang] + [str(count)] + [json_parsed] + [datetime.datetime.now()])
 
 def NextPage(url,next,last):
     count_last = 2
