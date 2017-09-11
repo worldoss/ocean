@@ -8,6 +8,13 @@ import csv
 import datetime
 import time
 
+class NoResultError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
 # Other Language 리스트를 웹에서 불러옴 (콘솔에 출력)
 class WebCrawler():
     def __init__(self):
@@ -29,7 +36,12 @@ class WebCrawler():
         print url
         fp = urllib.urlopen(url)
         source = fp.read()
+
+        if source == 'Not Found':
+            raise NoResultError('No result Found')
+
         fp.close()
+
         self.request = BeautifulSoup(source, 'html.parser')
 
     # Scrap Summary
@@ -128,6 +140,11 @@ class WebCrawler():
             self.data['Saved_DateTime'] = str(datetime.datetime.now())
             writer.writerow(self.data)
 
+    def ErrorWriter(self,fullname):
+        with open('error_repository.csv', 'a') as csvfile:
+            errorwriter = csv.writer(csvfile)
+            errorwriter.writerow([fullname])
+
 repositories = WebCrawler()
 
 # Parse Repository owner and name
@@ -135,11 +152,15 @@ with open('data/finalRepoDataCol2.csv','r') as csvfile:
     reader = csv.DictReader(csvfile)
     repositories.CSVCreater()
     for row in reader:
-
-        # Crawling Start
-        owner,repo = row['full_name'].split('/')
-        repositories.data['full_name'] = row['full_name']
-        repositories.Request(owner,repo)
-        repositories.SummaryScrap()
-        repositories.TopicScrap()
-        repositories.CSVWrtier()
+        try:
+            # Crawling Start
+            owner,repo = row['full_name'].split('/')
+            repositories.data['full_name'] = row['full_name']
+            repositories.Request(owner,repo)
+            repositories.SummaryScrap()
+            repositories.TopicScrap()
+            repositories.CSVWrtier()
+        except NoResultError as e:
+            print e
+            repositories.ErrorWriter(row['full_name'])
+            break
