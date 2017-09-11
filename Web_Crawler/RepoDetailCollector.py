@@ -1,5 +1,7 @@
 #-*- coding: utf-8 -*-
 
+# version 1.1
+
 from bs4 import BeautifulSoup
 import urllib
 import csv
