@@ -63,3 +63,10 @@ def centralissimo(E):
     print("%s: %s" % (node, measures))
 
 centralissimo(G)
+
+# 우선순위정렬(중심성)    
+in_degree_central = nx.in_degree_centrality(G)
+sorted(in_degree_central.items(), key=lambda x: x[1], reverse=True)[:3] # 예시데이터 기준 3개의 repository 중심성 순위 정렬
+
+out_degree_central = nx.out_degree_centrality(G)
+sorted(out_degree_central.items(), key=lambda x: x[1], reverse=True)[:10]
