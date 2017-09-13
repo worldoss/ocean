@@ -2,13 +2,14 @@
 
 # version 1.1
 
+# 예상소요시간: 약 70시간
+
 from bs4 import BeautifulSoup
 import urllib
 import csv
 import datetime
 import time
 
-# Other Language 리스트를 웹에서 불러옴 (콘솔에 출력)
 class WebCrawler():
     def __init__(self):
         self.data = {}
