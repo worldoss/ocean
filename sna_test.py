@@ -30,11 +30,19 @@ print(edge_list)
 user_nodes = list(set(a_node))
 repo_nodes = list(set(b_node))
 nodes = user_nodes + repo_nodes
-edges = [edge_list[0]]
+edges = edge_list
 
 G = nx.DiGraph()
 G.add_nodes_from(nodes)
 G.add_edges_from(edges)
+
+# positions for all nodes
+pos = nx.shell_layout(G)
+nx.draw_networkx_nodes(G,pos,node_size=500, node_color='r')
+nx.draw_networkx_edges(G,pos,edgelist=edges, width=0.5)
+
+# labels
+nx.draw_networkx_labels(G,pos)
 
 # edge list Visualization
 nx.draw_networkx(G)  
