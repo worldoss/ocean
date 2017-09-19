@@ -45,7 +45,7 @@ nx.draw_networkx_labels(G,pos)
 nx.draw_networkx(G)  
 plt.show()
  
-    
+# centralities
 def centralities_list(E):
     centralities = []
     centralities.append(nx.in_degree_centrality(E))
@@ -66,3 +66,8 @@ sorted(in_degree_central.items(), key=lambda x: x[1], reverse=True)[:10]
 
 out_degree_central = nx.out_degree_centrality(G)
 sorted(out_degree_central.items(), key=lambda x: x[1], reverse=True)[:10]
+
+# density
+def density(Network):
+    density = []    
+    density.append(round(nx.density(G)))
