@@ -1,12 +1,14 @@
+# -*- coding: utf-8 -*-
+
 import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import csv
  
-file_path = 'C:\\Users\\LG\\Desktop\\'  #  로컬저장소에서 분석용 데이터가 위치한 path 설정
 
-data = pd.read_csv(file_path + 'jongmake.csv')     # pandas 라이브러리를 이용해서 SNA 분석 csv 파일 읽어오기
+path = "D:\\Paul_ds\\01_IBIS_paul\\PycharmProjects\\Github_SNA\\"
+data = pd.read_csv(path + 'jongmake.csv')     # pandas 라이브러리를 이용해서 SNA 분석 csv 파일 불러오기
  
  
  
@@ -31,25 +33,19 @@ nodes = user_nodes + repo_nodes
     
 G = nx.DiGraph()
 G.add_nodes_from(nodes)
-G.add_edges_from(edges)
+G.add_edges_from(edge_list)
 
 # 만들어진 네트워크 타입, 노드 수, 엣지 수, in/out 평균 degree 확인
-print(nx.info(G)
+print(nx.info(G))
 
-# positions for all nodes
-pos = nx.shell_layout(G)
-nx.draw_networkx_nodes(G,pos,node_size=500, node_color='r')
-nx.draw_networkx_edges(G,pos,edgelist=edges, width=0.5)
- 
-# labels
-nx.draw_networkx_labels(G,pos)
+
  
 # edge list Visualization
 nx.draw_networkx(G)  
 plt.show()
  
 # centralities
-def centralities_list(E):
+def central_list(E):
     centralities = []
     centralities.append(nx.in_degree_centrality(E))
     centralities.append(nx.out_degree_centrality(E))
@@ -61,7 +57,7 @@ def centralities_list(E):
       measures = ("\t").join(map(lambda f: str(f[node]), centralities))
       print("%s: %s" % (node, measures))
  
-centralities_list(G)
+central_list(G)
 
 # in/out degree Top-10 확인    
 def sorting(E):
