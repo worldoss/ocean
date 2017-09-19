@@ -35,14 +35,6 @@ G = nx.DiGraph()
 G.add_nodes_from(nodes)
 G.add_edges_from(edge_list)
 
-# 만들어진 네트워크 타입, 노드 수, 엣지 수, in/out 평균 degree 확인
-print(nx.info(G))
-
-
- 
-# edge list Visualization
-nx.draw_networkx(G)  
-plt.show()
  
 # centralities
 def central_list(E):
@@ -66,6 +58,8 @@ def sorting(E):
  
     out_degree_central = nx.out_degree_centrality(E)
     sorted(out_degree_central.items(), key=lambda x: x[1], reverse=True)[:10]
+    print(in_degree_central)
+    print(out_degree_central)
 
 sorting(G)
 
@@ -77,3 +71,11 @@ def density(Network):
 # adjacent matrix
 adj = nx.adj_matrix(G)
 adj_G =adj.todense()
+
+
+# 만들어진 네트워크 타입, 노드 수, 엣지 수, in/out 평균 degree 확인
+print(nx.info(G))
+
+# edge list Visualization
+nx.draw_networkx(G)
+plt.show()
