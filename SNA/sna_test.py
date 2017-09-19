@@ -32,7 +32,10 @@ nodes = user_nodes + repo_nodes
 G = nx.DiGraph()
 G.add_nodes_from(nodes)
 G.add_edges_from(edges)
-  
+
+# 만들어진 네트워크 타입, 노드 수, 엣지 수, in/out 평균 degree 확인
+print(nx.info(G)
+
 # positions for all nodes
 pos = nx.shell_layout(G)
 nx.draw_networkx_nodes(G,pos,node_size=500, node_color='r')
@@ -61,13 +64,20 @@ def centralities_list(E):
 centralities_list(G)
 
 # in/out degree Top-10 확인    
-in_degree_central = nx.in_degree_centrality(G)
-sorted(in_degree_central.items(), key=lambda x: x[1], reverse=True)[:10]
+def sorting(E):
+    in_degree_central = nx.in_degree_centrality(E)
+    sorted(in_degree_central.items(), key=lambda x: x[1], reverse=True)[:10] 
+ 
+    out_degree_central = nx.out_degree_centrality(E)
+    sorted(out_degree_central.items(), key=lambda x: x[1], reverse=True)[:10]
 
-out_degree_central = nx.out_degree_centrality(G)
-sorted(out_degree_central.items(), key=lambda x: x[1], reverse=True)[:10]
+sorting(G)
 
 # density
 def density(Network):
     density = []    
     density.append(round(nx.density(G)))
+   
+# adjacent matrix
+adj = nx.adj_matrix(G)
+adj_G =adj.todense()
