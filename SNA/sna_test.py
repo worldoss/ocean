@@ -10,12 +10,9 @@ import csv
 path = "D:\\Paul_ds\\01_IBIS_paul\\PycharmProjects\\Github_SNA\\"
 data = pd.read_csv(path + 'jongmake.csv')     # pandas 라이브러리를 이용해서 SNA 분석 csv 파일 불러오기
  
- 
- 
 # node 정의
 a_node = data.values[:,0]    # a_node = User ID
 b_node = data.values[:,1]    # b_node = repository_name
- 
  
 # edge list 정의
 edge_list = []
@@ -38,33 +35,25 @@ G.add_edges_from(edge_list)
 # 만들어진 네트워크 타입, 노드 수, 엣지 수, in/out 평균 degree 확인
 print(nx.info(G))
 
-
- 
 # edge list Visualization
 nx.draw_networkx(G)  
 plt.show()
  
 # centralities
 def central_list(E):
-    centralities = []
-    centralities.append(nx.in_degree_centrality(E))
-    centralities.append(nx.out_degree_centrality(E))
-    centralities.append(nx.closeness_centrality(E))
-    centralities.append(nx.betweenness_centrality(E))
-    centralities.append(nx.eigenvector_centrality(E))
- 
-    for node in E.nodes_iter():
-      measures = ("\t").join(map(lambda f: str(f[node]), centralities))
-      print("%s: %s" % (node, measures))
- 
-central_list(G)
+    return nx.degree_centrality(E), nx.closeness_centrality(E), nx.betweenness_centrality(E), nx.eigenvector_centrality(E)
 
-# in/out degree Top-10 확인    
+central_list(G)
+c1 = nx.degree_centrality(G)
+c2 = nx.closeness_centrality(G)
+c3 = nx.betweenness_centrality(G)
+c4 = nx.eigenvector_centrality(G)
+
+# degree Top-10 확인    
 def sorting(E):
-    in_degree_central = nx.in_degree_centrality(E)
-    sorted(in_degree_central.items(), key=lambda x: x[1], reverse=True)[:10] 
- 
-    out_degree_central = nx.out_degree_centrality(E)
+    degree_central = nx.degree_centrality(E)
+    sorted(degree_central.items(), key=lambda x: x[1], reverse=True)[:10] 
+    closeness_central = nx.out_degree_centrality(E)
     sorted(out_degree_central.items(), key=lambda x: x[1], reverse=True)[:10]
 
 sorting(G)
@@ -77,3 +66,31 @@ def density(Network):
 # adjacent matrix
 adj = nx.adj_matrix(G)
 adj_G =adj.todense()
+
+# 출력파일 저장(User)
+file_path = 'C:\\Users\\LG\Desktop\\'
+file_name = 'centralities_user.csv'
+
+header_user = ['user', 'degree_central', 'closeness_central', 'betweenness_central', 'eigenvector_central']
+
+with open(file_path + file_name, 'w', newline='', encoding='utf-8') as f:
+    csv_write = csv.writer(f)
+    csv_write.writerow(header_user)
+  
+with open(file_path + file_name, 'a', newline='', encoding='utf-8') as f:
+    csv_write = csv.writer(f)
+    for name in user_nodes:
+        csv_writer.writerow([name]+[c1[name]]+[c2[name]]+[c3[name]]+[c4[name]])
+
+# 출력파일 저장(reposiroty)
+file_name = 'centralities_repository.csv'
+header_repo = ['repository', 'degree_central', 'closeness_central', 'betweenness_central', 'eigenvector_central']
+
+with open(file_path + file_name, 'w', newline='', encoding='utf-8') as f:
+    csv_write = csv.writer(f)
+    csv_write.writerow(header_repo)
+   
+with open(file_path + file_name, 'a', newline='', encoding='utf-8') as f:
+    csv_write = csv.writer(f)
+    for name in repo_nodes:
+        csv_write.writerow([name]+[c1[name]]+[c2[name]]+[c3[name]]+[c4[name]])
