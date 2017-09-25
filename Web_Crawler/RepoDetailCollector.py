@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-# version 1.2
+# version 1.1
 
 from bs4 import BeautifulSoup
 import urllib
@@ -144,11 +144,20 @@ class WebCrawler():
         with open('error_repository.csv', 'a') as csvfile:
             errorwriter = csv.writer(csvfile)
             errorwriter.writerow([fullname])
+        with open('Repository_data.csv','a') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.field_list)
+            for field in self.field_list:
+                self.data[field] = 'null'
+            self.data['full_name'] = fullname
+            self.data['Topic'] = []
+            self.data['Saved_DateTime'] = str(datetime.datetime.now())
+            writer.writerow(self.data)
+
 
 repositories = WebCrawler()
 
 # Parse Repository owner and name
-with open('data/finalRepoDataCol2.csv','r') as csvfile:
+with open('data/hello.csv','r') as csvfile:
     reader = csv.DictReader(csvfile)
     repositories.CSVCreater()
     for row in reader:
@@ -160,6 +169,11 @@ with open('data/finalRepoDataCol2.csv','r') as csvfile:
             repositories.SummaryScrap()
             repositories.TopicScrap()
             repositories.CSVWrtier()
+        except ValueError as e:
+            print e
+        except IndexError as e:
+            print e
+            repositories.ErrorWriter(row['full_name'])
         except NoResultError as e:
             print e
             repositories.ErrorWriter(row['full_name'])
