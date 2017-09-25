@@ -52,9 +52,15 @@ c4 = nx.eigenvector_centrality(G)
 # degree Top-10 확인    
 def sorting(E):
     degree_central = nx.degree_centrality(E)
-    sorted(degree_central.items(), key=lambda x: x[1], reverse=True)[:10] 
-    closeness_central = nx.out_degree_centrality(E)
-    sorted(out_degree_central.items(), key=lambda x: x[1], reverse=True)[:10]
+    a = sorted(degree_central.items(), key=lambda x: x[1], reverse=True)[:10]  
+    closeness_central = nx.closeness_centrality(E)
+    b = sorted(closeness_central.items(), key=lambda x:x[1], reverse=True)[:10]
+    betweenness_central = nx.betweenness_centrality(E)
+    c = sorted(betweenness_central.items(), key=lambda x: x[1], reverse=True)[:10]
+    eigenvector_central = nx.eigenvector_centrality(E)
+    d = sorted(eigenvector_central.items(), key=lambda x: x[1], reverse=True)[:10]
+
+    return a, b, c, d
 
 sorting(G)
 
