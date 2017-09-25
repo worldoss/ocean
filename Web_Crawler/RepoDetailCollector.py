@@ -121,7 +121,7 @@ class WebCrawler():
             topicelement = topic[0].find_all('a')
             print 'Topic: '
             for ele in topicelement:
-                parsed = ele.text.replace('\n', '').strip()
+                parsed = ele.text.replace('\n', '').strip().encode('ascii')
                 self.data['Topic'].append(parsed)
                 print parsed
         else:
