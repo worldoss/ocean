@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-# version 1.1
+# version 1.2
 
 # 예상소요시간: 약 70시간
 
@@ -10,6 +10,14 @@ import csv
 import datetime
 import time
 
+class NoResultError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
+# Other Language 리스트를 웹에서 불러옴 (콘솔에 출력)
 class WebCrawler():
     def __init__(self):
         self.data = {}
@@ -30,7 +38,12 @@ class WebCrawler():
         print url
         fp = urllib.urlopen(url)
         source = fp.read()
+
+        if source == 'Not Found':
+            raise NoResultError('No result Found')
+
         fp.close()
+
         self.request = BeautifulSoup(source, 'html.parser')
 
     # Scrap Summary
@@ -110,7 +123,7 @@ class WebCrawler():
             topicelement = topic[0].find_all('a')
             print 'Topic: '
             for ele in topicelement:
-                parsed = ele.text.replace('\n', '').strip()
+                parsed = ele.text.replace('\n', '').strip().encode('ascii')
                 self.data['Topic'].append(parsed)
                 print parsed
         else:
@@ -129,18 +142,40 @@ class WebCrawler():
             self.data['Saved_DateTime'] = str(datetime.datetime.now())
             writer.writerow(self.data)
 
+    def ErrorWriter(self,fullname):
+        with open('error_repository.csv', 'a') as csvfile:
+            errorwriter = csv.writer(csvfile)
+            errorwriter.writerow([fullname])
+        with open('Repository_data.csv','a') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.field_list)
+            for field in self.field_list:
+                self.data[field] = 'null'
+            self.data['full_name'] = fullname
+            self.data['Topic'] = []
+            self.data['Saved_DateTime'] = str(datetime.datetime.now())
+            writer.writerow(self.data)
+
 repositories = WebCrawler()
 
 # Parse Repository owner and name
-with open('data/finalRepoDataCol2.csv','r') as csvfile:
+with open('data/hello.csv','r') as csvfile:
     reader = csv.DictReader(csvfile)
     repositories.CSVCreater()
     for row in reader:
-
-        # Crawling Start
-        owner,repo = row['full_name'].split('/')
-        repositories.data['full_name'] = row['full_name']
-        repositories.Request(owner,repo)
-        repositories.SummaryScrap()
-        repositories.TopicScrap()
-        repositories.CSVWrtier()
+        try:
+            # Crawling Start
+            owner,repo = row['full_name'].split('/')
+            repositories.data['full_name'] = row['full_name']
+            repositories.Request(owner,repo)
+            repositories.SummaryScrap()
+            repositories.TopicScrap()
+            repositories.CSVWrtier()
+        except ValueError as e:
+            print e
+        except IndexError as e:
+            print e
+            repositories.ErrorWriter(row['full_name'])
+        except NoResultError as e:
+            print e
+            repositories.ErrorWriter(row['full_name'])
+            break
