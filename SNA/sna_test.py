@@ -13,8 +13,8 @@ data = pd.read_csv(path + 'jongmake.csv')     # pandas 라이브러리를 이용
  
  
 # node 정의
-a_node = data.values[:,0]    # a_node = User ID
-b_node = data.values[:,1]    # b_node = repository_name
+a_node = data.values[:,1]    # a_node = User ID
+b_node = data.values[:,3]    # b_node = repository_name
  
  
 # edge list 정의
