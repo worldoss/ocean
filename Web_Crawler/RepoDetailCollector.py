@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-# version 1.1
+# version 1.2
 
 from bs4 import BeautifulSoup
 import urllib
