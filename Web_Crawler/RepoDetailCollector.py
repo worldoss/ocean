@@ -2,6 +2,8 @@
 
 # version 1.2
 
+# 예상소요시간: 약 70시간
+
 from bs4 import BeautifulSoup
 import urllib
 import csv
@@ -152,7 +154,6 @@ class WebCrawler():
             self.data['Topic'] = []
             self.data['Saved_DateTime'] = str(datetime.datetime.now())
             writer.writerow(self.data)
-
 
 repositories = WebCrawler()
 
