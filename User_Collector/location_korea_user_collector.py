@@ -107,7 +107,10 @@ def search_location(location_name, file_path=file_path, location_user_data_file_
                                         del_list.append(j_data['items'][j]['id'])
                                         f.writerow(
                                             [j_data['items'][j]['login'], j_data['items'][j]['id'], location_name])
-                                page += 1
+                                if len(j_data['items']) != 100:
+                                    page = 101
+                                else:
+                                    page += 1
                                 break
 
 
