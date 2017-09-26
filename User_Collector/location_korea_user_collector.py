@@ -54,7 +54,7 @@ def search_location(location_name, file_path=file_path, location_user_data_file_
 
                     if swtich_value == 1:
                         page = 1
-                        while page <= 100:
+                        while page <= 10:
                             q_location_name = urllib2.quote(location_name)
                             q_str_date = urllib2.quote(str_date)
                             url = 'https://api.github.com/search/users?q=location:' + q_location_name + '+created:' \
@@ -74,21 +74,21 @@ def search_location(location_name, file_path=file_path, location_user_data_file_
                                     pass
                                 try:
                                     if j_data['message'] == "Validation Failed":
-                                        page = 101
+                                        page = 11
                                         print '\t!!!!....Validation Failed....!!!!'
                                         break
                                 except:
                                     pass
                                 try:
                                     if j_data['message'] == "Bad credentials":
-                                        page = 101
+                                        page = 11
                                         print '\t!!!!....Bad credentials....!!!!'
                                         break
                                 except:
                                     pass
                                 try:
                                     if j_data['items'] == []:
-                                        page = 101
+                                        page = 11
                                         print '\t!!!!....empty items....!!!!'
                                         break
                                 except:
@@ -108,7 +108,7 @@ def search_location(location_name, file_path=file_path, location_user_data_file_
                                         f.writerow(
                                             [j_data['items'][j]['login'], j_data['items'][j]['id'], location_name])
                                 if len(j_data['items']) != 100:
-                                    page = 101
+                                    page = 11
                                 else:
                                     page += 1
                                 break
