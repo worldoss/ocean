@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import httplib2
+import urllib2
 import json
 import base64
 import csv
 import time
-import urllib2
 
 id = 'id'
 pw = 'pw'
