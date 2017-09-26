@@ -103,7 +103,7 @@ def search_location(location_name, file_path=file_path, location_user_data_file_
                                 for j in range(len(j_data['items'])):
                                     if j_data['items'][j]['id'] not in del_list:
                                         # location_name = unicode(location_name)
-                                        print(j_data['items'][j]['login'], j_data['items'][j]['id'], location_name)
+                                        print j_data['items'][j]['login'], j_data['items'][j]['id'], location_name
                                         del_list.append(j_data['items'][j]['id'])
                                         f.writerow(
                                             [j_data['items'][j]['login'], j_data['items'][j]['id'], location_name])
