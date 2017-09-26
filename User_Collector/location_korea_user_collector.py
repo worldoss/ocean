@@ -177,16 +177,16 @@ with open(file_path + korea_user_file_name, 'w') as f_open:
     f = csv.writer(f_open)
     f.writerow(['user_name', 'user_id', 'search_location'])
 
+with open(file_path + location_count_file_name, 'w') as f_open:
+    f = csv.writer(f_open)
+    f.writerow(['location_name', 'total_count'])
+    
 for l_name in location_list:
     day_val = total_search_location(location_name=l_name, file_path=file_path, location_user_data_file_name=korea_user_file_name,
                           del_list=del_list, location_count_dict=location_count_dict)
     if day_val == 'day_fn_start':
         day_search_location(location_name=l_name, file_path=file_path, location_user_data_file_name=korea_user_file_name,
                     del_list=del_list, start_date=start_date, end_date=end_date)
-
-with open(file_path + location_count_file_name, 'w') as f_open:
-    f = csv.writer(f_open)
-    f.writerow(['location_name', 'total_count'])
 
 print double_line_point + '\n'
 
