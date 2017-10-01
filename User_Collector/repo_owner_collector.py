@@ -41,7 +41,7 @@ with open(file_path + repo_file_name, 'r') as f:
         repo_Saved_DateTime_list.append(row['Saved_DateTime'])
 
 if repo_id_list == [] or owner_data_list == [] or repo_Saved_DateTime_list == []:
-    print('ERROR !!!!')
+    print 'ERROR !!!!'
     exit()
 
 owner_final_data, owner_field_data = owner_parsing_fn(owner_data_list)
@@ -51,9 +51,9 @@ with open(file_path + owner_file_name, 'w') as f:
         f.writerow(['repo_id'] + list(owner_field_data) + ['saved_DateTime'])
 
 for owner_raw_data, repo_id, repo_Saved_DateTime in zip(owner_final_data, repo_id_list, repo_Saved_DateTime_list):
-    # print(owner_raw_data)
+    # print owner_raw_data
     with open(file_path + owner_file_name, 'a') as f:
         f = csv.writer(f)
         f.writerow([repo_id] + list(owner_raw_data) + [repo_Saved_DateTime])
 
-print('Complete !')
+print 'Complete !'
