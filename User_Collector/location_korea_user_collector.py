@@ -19,7 +19,7 @@ idpw_6 = ['id_6','pw_6']
 
 idpw_list = [idpw_1, idpw_2, idpw_3, idpw_4, idpw_5, idpw_6]
 
-file_path = 'file_path/
+file_path = 'file_path'
 korea_user_file_name = 'korea_user_file_name'
 
 search_location_list = ['korea', 'south korea', 'republic of korea', 'seoul', 'incheon', 'busan', 'pusan', 'daegu', 'gwangju', 'daejeon', 'ulsan', 'pangyo', 'pankyo', 'jeju', 'jejudo']
