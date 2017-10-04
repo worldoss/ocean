@@ -5,11 +5,11 @@ import pandas as pd
 
 ####################################################################################################
 
-repo_description_and_topic_file_path = '/home/ywy/ywy_SPRi/test_repo/'
-repo_description_and_topic_file_name = 'topic_data.csv'
+repo_description_and_topic_file_path = 'repo_description_and_topic_file_path'
+repo_description_and_topic_file_name = 'repo_description_and_topic_file_name.csv'
 
-repo_topic_file_path = '/home/ywy/ywy_SPRi/test_repo/'
-repo_topic_file_name = 'repo_topic.csv'
+repo_topic_file_path = 'repo_topic_file_path'
+repo_topic_file_name = 'repo_topic_file_name.csv'
 
 remove_topic_list = ['is', 'in', 'of', 'the']
 remove_text_list= [',', '.', '/', "'", '"', '(', ')', '{', '}', '[', ']']
