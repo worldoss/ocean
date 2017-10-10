@@ -38,6 +38,7 @@ for i in range(total_data.shape[0]):
     tmp_save_topic_list = []
     for j in range(2,total_data.shape[1]):
         total_data[i][j] = str(total_data[i][j])
+        total_data[i][j] = total_data[i][j].lower()
         if total_data[i][j] != 'nan':
             tmp_save_topic_list.append(total_data[i][j])
             if total_data[i][j] not in topic_list:
@@ -64,6 +65,7 @@ for i in range(total_data.shape[0]):
         per += 0.1
     tmp_make_topic_list = []
     description_data = str(total_data[i][1])
+    description_data = description_data.lower()
     for remove_text in remove_text_list:
         description_data = description_data.replace(remove_text, ' ')
     description_data_list = description_data.split()
@@ -81,5 +83,6 @@ for i in range(total_data.shape[0]):
             pass
     f.writerow([total_data[i][0]] + insert_topic_list)
 
+f_open.close()
 end = time.time()
 print double_point_line + '\nRunning_Time : %0.4f'%((end-start)/60) + 'm\n' + double_point_line
