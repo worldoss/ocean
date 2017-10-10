@@ -1,18 +1,20 @@
 import csv
 import time
 import pandas as pd
+from nltk.corpus import stopwords
 
 
 ####################################################################################################
 
-repo_description_and_topic_file_path = 'repo_description_and_topic_file_path'
-repo_description_and_topic_file_name = 'repo_description_and_topic_file_name.csv'
+repo_description_and_topic_file_path = ''
+repo_description_and_topic_file_name = 'crawling_repo_topic_data.csv'
 
-repo_topic_file_path = 'repo_topic_file_path'
-repo_topic_file_name = 'repo_topic_file_name.csv'
+repo_topic_file_path = ''
+repo_topic_file_name = 'new_repo_topic_data2.csv'
 
 remove_topic_list = ['is', 'in', 'of', 'the']
 remove_text_list= [',', '.', '/', "'", '"', '(', ')', '{', '}', '[', ']']
+stop_words = set(stopwords.words('english'))
 
 ####################################################################################################
 
@@ -70,7 +72,8 @@ for i in range(total_data.shape[0]):
             tmp_make_topic_list.append(description_data_list[j])
     make_topic_list.append(tmp_make_topic_list)
     insert_topic_list = list(set(save_topic_list[i] + make_topic_list[i]))
-    for remove_topic in remove_topic_list:
+
+    for remove_topic in stop_words:
         try:
             insert_topic_list.remove(remove_topic)
             # print '\t', 'remove_topic : ', remove_topic
