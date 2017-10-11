@@ -49,20 +49,17 @@ c2 = nx.closeness_centrality(G)
 c3 = nx.betweenness_centrality(G)
 c4 = nx.eigenvector_centrality(G)
 
-# degree Top-10 확인    
+# degree Top-30 확인    
 def sorting(E):
-    degree_central = nx.degree_centrality(E)
-    a = sorted(degree_central.items(), key=lambda x: x[1], reverse=True)[:10]  
-    closeness_central = nx.closeness_centrality(E)
-    b = sorted(closeness_central.items(), key=lambda x:x[1], reverse=True)[:10]
-    betweenness_central = nx.betweenness_centrality(E)
-    c = sorted(betweenness_central.items(), key=lambda x: x[1], reverse=True)[:10]
-    eigenvector_central = nx.eigenvector_centrality(E)
-    d = sorted(eigenvector_central.items(), key=lambda x: x[1], reverse=True)[:10]
+    sorting_c1 = sorted(c1.items(), key=lambda x: x[1], reverse=True)[:30]  # 예시데이터 기준 30개의 중심성 순위 정렬
+    sorting_c2 = sorted(c2.items(), key=lambda x: x[1], reverse=True)[:30]
+    sorting_c3 = sorted(c3.items(), key=lambda x: x[1], reverse=True)[:30]
+    sorting_c4 = sorted(c4.items(), key=lambda x: x[1], reverse=True)[:30]
 
-    return a, b, c, d
+    return sorting_c1, sorting_c2, sorting_C3, sorting_c4
 
-sorting(G)
+sorting = sorting(G)
+print(sorting)
 
 # density
 def density(Network):
