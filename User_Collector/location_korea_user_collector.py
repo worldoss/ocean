@@ -217,6 +217,7 @@ def month_search_location(location_name, file_path=file_path, location_user_data
                                     page += 1
                                 break
                             else:
+                                print 'day_search_start !!!!'
                                 day_search_location(location_name=location_name, search_month=str_date, f=f, del_list=del_list,
                                                     end_date=end_date, mode=mode, idpw_list=idpw_list)
                                 break
