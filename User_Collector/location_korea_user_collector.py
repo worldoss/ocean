@@ -67,7 +67,7 @@ def total_search_location(location_name, file_path=file_path, location_user_data
             j_data = json.loads(content)
             # print j_data
             try:
-                if j_data['incomplete_results'] != 0:
+                if j_data['incomplete_results'] != False:
                     print '\t!!!!....incomplete_results....!!!!'
                     continue
                 elif j_data['items'] == []:
@@ -131,7 +131,7 @@ def month_search_location(location_name, file_path=file_path, location_user_data
     swtich_value = 0
     f_open = open(file_path + location_user_data_file_name, 'a')
     f = csv.writer(f_open)
-    for year in range(2007, 2017+1):
+    for year in range(2007, 2100):
         str_year = str(year)
         for month in range(1, 12+1):
             str_month = str(month)
@@ -140,10 +140,6 @@ def month_search_location(location_name, file_path=file_path, location_user_data
             str_date = str_year + '-' + str_month
             if str_date == start_date[:-3]:
                 swtich_value = 1
-            if str_date == end_date[:-3]:
-                f_open.close()
-                return None
-
             if swtich_value == 1:
                 page = 1
                 while page <= 10:
@@ -159,7 +155,7 @@ def month_search_location(location_name, file_path=file_path, location_user_data
                         j_data = json.loads(content)
                         # print j_data
                         try:
-                            if j_data['incomplete_results'] != 0:
+                            if j_data['incomplete_results'] != False:
                                 print '\t!!!!....incomplete_results....!!!!'
                                 continue
                             elif j_data['items'] == []:
@@ -224,7 +220,9 @@ def month_search_location(location_name, file_path=file_path, location_user_data
                         except:
                             print j_data
                             continue
-    f_open.close()
+            if str_date == end_date[:-3]:
+                f_open.close()
+                return None
 
 def day_search_location(location_name, search_month, f, del_list=del_list, end_date=end_date, mode=1, idpw_list=idpw_list):
     global id_pw_num
@@ -235,9 +233,6 @@ def day_search_location(location_name, search_month, f, del_list=del_list, end_d
         if len(str_day) == 1:
             str_day = '0' + str_day
         str_date = search_month + '-' + str_day
-        if str_date == end_date:
-            f_open.close()
-            return None
         page = 1
         while page <= 10:
             q_location_name = urllib2.quote('"' + location_name + '"')
@@ -252,7 +247,7 @@ def day_search_location(location_name, search_month, f, del_list=del_list, end_d
                 j_data = json.loads(content)
                 # print j_data
                 try:
-                    if j_data['incomplete_results'] != 0:
+                    if j_data['incomplete_results'] != False:
                         print '\t!!!!....incomplete_results....!!!!'
                         continue
                     elif j_data['items'] == []:
@@ -312,7 +307,10 @@ def day_search_location(location_name, search_month, f, del_list=del_list, end_d
                 except:
                     print j_data
                     continue
-
+        if str_date == end_date:
+            f_open.close()
+            return None
+        
 
 start = time.time()
 with open(file_path + korea_user_file_name, 'w') as f_open:
