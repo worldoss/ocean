@@ -21,7 +21,7 @@
 
 ### 새로 토픽이 매칭된 저장소
 * 138582개
-* [topic_with_created_at4.5.csv](https://github.com/worldoss/ocean/blob/master/SNA/SNA%20Clustering/highest_centrality4.5.csv)
+* [topic_with_created_at4.5.csv](https://github.com/worldoss/ocean/blob/master/SNA/SNA%20Clustering/topic_with_created_at4.5.csv)
 
 ### Cluster 결과
 ###### SNA cluster의 경우 군집들을 Community라고 부름
@@ -30,7 +30,7 @@
 * Community 131개
 
 ### 토픽 군집 결과
-* [highest_centrality4.5.csv](https://github.com/worldoss/ocean/blob/master/SNA/SNA%20Clustering/new_topic_matched_data.csv)
+* [highest_centrality4.5.csv](https://github.com/worldoss/ocean/blob/master/SNA/SNA%20Clustering/highest_centrality4.5.csv)
 * Community 0: System Monitoring 관련 토픽들이 군집됨 (토픽 514개)
 	* monitoring, performance, metrics, log, memeroy, cpu, performance, process
 * Community 5: Security 관련 토픽들이 군집됨 (토픽 1562개)
