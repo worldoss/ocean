@@ -118,7 +118,7 @@ def search_owner(f_1, f_2, repo_id, owner_name, field_list, idpw_list=idpw_list)
         try:
             if j_data['message'] == 'Not Found':
                 print '\t!!!!....Not Found....!!!!'
-                f_2.writerow([owner_name, j_data['message']])
+                f_2.writerow([repo_id, owner_name, j_data['message']])
                 break
         except:
             pass
@@ -157,7 +157,7 @@ field_list = search_owner_field(owner_name_list[0])
 
 with open(owner_search_error_file_path + owner_search_error_file_name, 'w') as f_open:
     f = csv.writer(f_open)
-    f.writerow(['user_login', 'error_message'])
+    f.writerow(['repo_id', 'user_login', 'error_message'])
 
 with open(owner_full_data_file_path + owner_full_data_file_name, 'a') as f_1_open:
     f_1 = csv.writer(f_1_open)
