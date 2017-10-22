@@ -136,9 +136,9 @@ def search_owner(f_1, f_2, repo_id, owner_name, field_list, idpw_list=idpw_list)
             break
         except:
             try:
-                f_2.writerow([owner_name, j_data['message']])
+                f_2.writerow([repo_id, owner_name, j_data['message']])
             except:
-                f_2.writerow([owner_name, j_data])
+                f_2.writerow([repo_id, owner_name, j_data])
             break
     return f_1_open, f_2_open
 
