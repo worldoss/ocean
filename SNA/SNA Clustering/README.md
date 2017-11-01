@@ -108,85 +108,4 @@
 * ship
 	
 #### 시스템 SW
-
-* Operating system
-* Embedded / Real-Time operating system
-* Mobile operating system
-* PCServer operating system
-* Data management
-* DBMS
-* Data integration
-* Big Data Management
-* Data analysis
-* Storage
-* File system
-* Backing up your data
-* Storage archiving
-* SW Engineering tool
-* Test quality qualification
-* SW Development Tool
-* Virtualization
-* Hypervisor for serverPC
-* Embedded Hypervisor
-* Resource virtualization
-* Virtualizing Applications
-* System security
-* Certified.
-* Access control
-* Intrusion detection / defence
-
-#### 미들웨어 SW
-
-* Distributed system SW
-* Web application server
-* Unified Integration Solution
-* Real-time data processing
-* Distributed parallel processing
-* TP monitor
-* IT Resource Management
-* System management
-* SW Run SW
-* Network management
-* Manage IT Service Operations
-* Service platform
-* IoT platform
-* Cloud Services Platform
-* UI / UX framework
-* CDN
-* Network security
-* Network access control
-* Secure communication
-* Contradicting prevention / incident response
-* Security management
-
-#### 응용 SW
-
-* Image processing
-* Image recognition / analysis
-* Video codec / streaming
-* Image-writing / editing / synthesis
-* CGCCS
-* 3D scanning / print
-* Modelling / animation / rendering
-* Virtual Reality / Augmented Reality
-* Holographic / Stereoscopy 3D
-* Virtual simulation
-* Content distribution
-* Content Protection
-* Content management
-* Content distribution
-* Natural language processing
-* Informationsequence response
-* Decision support
-* Language analysis / conversion
-* Conversational processing
-* Voice processing
-* Voice recognition
-* speech synthesis
-* Acoustic processing
-* Enterprise SW
-* Office wear
-* ERP
-* SCM
-* BI
-* CRM
+* Operating * Embedded* os* Real-Time* PCServer* data* DBMS* data* big-data* system* integration* big* backup* archiving* engineering* test* development* virutalization* hypervisor* archive* tool* serverpc* resource* virtualizing* security* Certified.* Access control* Intrusion detection / defence* Middleware* Distributed system SW* Web application server* Unified Integration Solution* TP monitor* IoT platform* UI / UX framework* CDN* Network security* Network access control* Secure communication* real-time* distributed* run* cloud* parallel* it-resource* incident* preventionApplication SW* image* recognition* Video codec / streaming* Image-writing / editing / synthesis* CGCCS* 3D scanning / print* Modelling / animation / rendering* Virtual Reality / Augmented Reality* Holographic / Stereoscopy 3D* Virtual simulation* Content distribution* Content Protection* Content distribution* natural language* informationsequence* Decision support* language conversion* conversational* Voice recognition* speech synthesis* acoustic* enterprise* Office wear* ERP* SCM* BI* CRM
