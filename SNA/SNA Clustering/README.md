@@ -108,4 +108,81 @@
 * ship
 	
 #### 시스템 SW
-* Operating * Embedded* os* Real-Time* PCServer* data* DBMS* data* big-data* system* integration* big* backup* archiving* engineering* test* development* virutalization* hypervisor* archive* tool* serverpc* resource* virtualizing* security* Certified.* Access control* Intrusion detection / defence* Middleware* Distributed system SW* Web application server* Unified Integration Solution* TP monitor* IoT platform* UI / UX framework* CDN* Network security* Network access control* Secure communication* real-time* distributed* run* cloud* parallel* it-resource* incident* preventionApplication SW* image* recognition* Video codec / streaming* Image-writing / editing / synthesis* CGCCS* 3D scanning / print* Modelling / animation / rendering* Virtual Reality / Augmented Reality* Holographic / Stereoscopy 3D* Virtual simulation* Content distribution* Content Protection* Content distribution* natural language* informationsequence* Decision support* language conversion* conversational* Voice recognition* speech synthesis* acoustic* enterprise* Office wear* ERP* SCM* BI* CRM
+
+* Operating 
+* Embedded
+* os
+* Real-Time
+* PCServer
+* data
+* DBMS
+* data
+* big-data
+* system
+* integration
+* big
+* backup
+* archiving
+* engineering
+* test
+* development
+* virutalization
+* hypervisor
+* archive
+* tool
+* serverpc
+* resource
+* virtualizing
+* security
+* Certified.
+* Access control
+* Intrusion detection / defence
+* Middleware
+* Distributed system SW
+* Web application server
+* Unified Integration Solution
+* TP monitor
+* IoT platform
+* UI / UX framework
+* CDN
+* Network security
+* Network access control
+* Secure communication
+* real-time
+* distributed
+* run
+* cloud
+* parallel
+* it-resource
+* incident
+* prevention
+
+응용 SW
+
+* image
+* recognition
+* Video codec / streaming
+* Image-writing / editing / synthesis
+* CGCCS
+* 3D scanning / print
+* Modelling / animation / rendering
+* Virtual Reality / Augmented Reality
+* Holographic / Stereoscopy 3D
+* Virtual simulation
+* Content distribution
+* Content Protection
+* Content distribution
+* natural language
+* informationsequence
+* Decision support
+* language conversion
+* conversational
+* Voice recognition
+* speech synthesis
+* acoustic
+* enterprise
+* Office wear
+* ERP
+* SCM
+* BI
+* CRM
