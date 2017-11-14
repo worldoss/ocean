@@ -21,33 +21,15 @@
 
 ### 새로 토픽이 매칭된 저장소
 * 138582개
-* [topic_with_created_at4.5.csv](https://github.com/worldoss/ocean/blob/master/SNA/SNA%20Clustering/topic_with_created_at4.5.csv)
+* [topic_with_created_at4.2.csv](https://github.com/worldoss/ocean/blob/master/SNA/SNA%20Clustering/topic_with_created_at4.2.csv)
 
-### Cluster 결과
-###### SNA cluster의 경우 군집들을 Community라고 부름
-* 노드: 37,704개
-* 엣지: 1,380,002개
-* Community 131개
-
-### 토픽 군집 결과
-* [highest_centrality4.5.csv](https://github.com/worldoss/ocean/blob/master/SNA/SNA%20Clustering/highest_centrality4.5.csv)
-* Community 0: System Monitoring 관련 토픽들이 군집됨 (토픽 514개)
-	* monitoring, performance, metrics, log, memeroy, cpu, performance, process
-* Community 5: Security 관련 토픽들이 군집됨 (토픽 1562개)
-	* security, tool, malware, hacking, vulnerability
-* Community 9: Machine-Learning 관련 토픽들 (2109개)
-	* python, data, machine-learning, deep-learning
-* Community 18: Server Environment 관련 토픽들 (1498개)
-	* docker, apache, containers, deployment, configuration
-* Community 22; Database 관련 토픽들이 군집 (토픽 642개)
-* Community 40: Bitcoin 관련 토픽들이 군집 (토픽 599개)
-* Community 12: Android (토픽 1189개)
-* Community 66: Transportation (토픽 49개)
-* Community 21: Raspberry-pi (토픽 1274개)
+### 기반/응용 토픽 매칭 결과
+* 기반 SW: 27,394개
+	* 토픽별 상위 빈도: 'framework': 5282, 'data': 3889, 'tool': 3502, 'system': 2332, 'development': 1670, 'ui': 1540, 'platform': 1301, 'network': 1233, 'control': 1068, 'os': 1067
+* 응용 SW: 11,914개
+	* 토픽별 상위 빈도: 'support': 2414, 'image': 1856, 'language': 1639, 'video': 1024, 'animation': 1005, 'content': 832, '3d': 678, 'streaming': 475, 'rendering': 472, 'virtual': 401, 'recognition': 231
 
 ## IITP 산업분류
-
-### 
 
 ### 분류 사전
 ###### 분류 용어의 경우, 서로 중복되는 경우가 많기 때문에 키워드의 정리가 필요, 산업특화 SW의 경우 중복단어를 제거했지만, 시스템, 미들웨어, 응용 SW는가 덜 됨
