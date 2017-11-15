@@ -25,9 +25,15 @@
 
 ### 기반/응용 토픽 매칭 결과
 * 기반 SW: 27,394개
+	* 해외 기반 SW: 27,327개
+	* 국내 기반 SW: 57개
 	* 토픽별 상위 빈도: 'framework': 5282, 'data': 3889, 'tool': 3502, 'system': 2332, 'development': 1670, 'ui': 1540, 'platform': 1301, 'network': 1233, 'control': 1068, 'os': 1067
 * 응용 SW: 11,914개
+	* 해외 응용 SW: 11,870개
+	* 국내 응용 SW: 44개
 	* 토픽별 상위 빈도: 'support': 2414, 'image': 1856, 'language': 1639, 'video': 1024, 'animation': 1005, 'content': 832, '3d': 678, 'streaming': 475, 'rendering': 472, 'virtual': 401, 'recognition': 231
+
+* 추후 개선 사항: support나 framework 와 같은 단어는 기반/응용 동시에 발생하는 경우가 많아서 분류 사전에서 제거해야함, Clustering 을 통해 나온 topic keyword들을 분류사전에 추가할 예정.
 
 ## IITP 산업분류
 
