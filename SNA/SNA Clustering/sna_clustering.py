@@ -10,12 +10,13 @@ import operator
 from nltk.corpus import stopwords
 
 class SNACluster():
-    def __init__(self,folder_name,classification_translation):
+    def __init__(self,folder_name,classification_translation,new_repo_topic_data):
         self.folder_name = folder_name
         self.classification = {
             'System SW': [],
             'Application SW': [],
         }
+        self.new_repo_topic_data = new_repo_topic_data
         with open(classification_translation, 'r', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             next(reader)
@@ -50,8 +51,8 @@ class SNACluster():
             for j in stop_words:
                 if j in self.result[i]:
                     self.result[i].remove(j)
-    def create_graph(self,new_repo_topic_data):
-        data = pd.read_csv(new_repo_topic_data, error_bad_lines=False, header=None,
+    def create_graph(self):
+        data = pd.read_csv(self.new_repo_topic_data, error_bad_lines=False, header=None,
                            sep=",", delimiter='\n')  # pandas 라이브러리를 이용해서 SNA 분석 csv 파일 불러오기
         # Creating node list
         node = []
@@ -185,9 +186,9 @@ class SNACluster():
                     writer.writerow([int(i[9:13]),len(self.centrality[i].items())]+high_centrality)
     def writing_classification_result(self):
         for i in self.result:
-            with open(self.folder_name+'/new_repo_topic_data.csv','r') as csvfile:
+            with open(self.new_repo_topic_data,'r') as csvfile:
                 reader = csv.reader(csvfile)
-                with open(self.folder_name+'/Classification_new/'+i+'.csv','a') as csvfile2:
+                with open(self.folder_name+'/'+i+'.csv','a') as csvfile2:
                     writer = csv.writer(csvfile2)
                     for read in reader:
                         for j in self.result[i]:
