@@ -3,11 +3,13 @@ from pprint import pprint
 
 # 데이터가 저장될 폴더명
 folder_name = 'data'
+classification_translation = 'Classification/Classification.csv'
+new_repo_topic_data = 'new_repo_topic_data.csv'
 
-sna = SNACluster(folder_name)
+sna = SNACluster(folder_name,classification_translation)
 
 # SNA 분석을 위한 그래프 생성
-sna.create_graph()
+sna.create_graph(new_repo_topic_data)
 # SNA Clustering 실행
 sna.clustering()
 # 각 Cluster의 노드별 Centrality 생성

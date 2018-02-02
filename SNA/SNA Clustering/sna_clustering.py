@@ -10,13 +10,13 @@ import operator
 from nltk.corpus import stopwords
 
 class SNACluster():
-    def __init__(self,folder_name):
+    def __init__(self,folder_name,classification_translation):
         self.folder_name = folder_name
         self.classification = {
             'System SW': [],
             'Application SW': [],
         }
-        with open('Classification_Translation_List/Classification.csv', 'r', encoding='utf-8') as csvfile:
+        with open(classification_translation, 'r', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             next(reader)
             for row in reader:
@@ -50,8 +50,8 @@ class SNACluster():
             for j in stop_words:
                 if j in self.result[i]:
                     self.result[i].remove(j)
-    def create_graph(self):
-        data = pd.read_csv(self.folder_name + '/new_repo_topic_data.csv', error_bad_lines=False, header=None,
+    def create_graph(self,new_repo_topic_data):
+        data = pd.read_csv(new_repo_topic_data, error_bad_lines=False, header=None,
                            sep=",", delimiter='\n')  # pandas 라이브러리를 이용해서 SNA 분석 csv 파일 불러오기
         # Creating node list
         node = []
