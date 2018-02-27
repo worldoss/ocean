@@ -120,8 +120,8 @@ class SNACluster():
                     for i,j in cent.items():
                         writer.writerow([i,j])
                 print ('Finished Community '+row[0])
-    def clustering(self):
-        partition = community.best_partition(self.G)
+    def clustering(self,resolution):
+        partition = community.best_partition(self.G,resolution=resolution)
         with open(self.folder_name+'/community.csv','a') as csvfile:
             writer = csv.writer(csvfile)
             for community_num in set(partition.values()):
